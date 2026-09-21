@@ -43,12 +43,17 @@ fn_work/                          # 源码：src/（每顶层函数一文件夹 
 
 ## 安装
 
+**方式一（推荐，ZCode 插件）**：Settings → Plugin Management → Discover → `+` 添加市场
+`https://github.com/r-y-ren/fn-ladder.git`，安装 **fn-ladder** 插件。
+
+**方式二（符号链接，适合直接改仓库开发）**：
+
 ```bash
-git clone https://github.com/r-y-ren/fn-ladder.git ~/projects/fn-ladder
-bash ~/projects/fn-ladder/install.sh
+git clone https://github.com/r-y-ren/fn-ladder.git ~/Code/fn-ladder
+bash ~/Code/fn-ladder/install.sh
 ```
 
-`install.sh` 在 `~/.zcode/skills/` 下为七个技能与总览创建符号链接——源头只有仓库一份，改仓库即生效。安装后新开会话，`/fn-grill` 起步（存量项目 `/fn-refactor`，多项目合并 `/fn-merge`）。
+`install.sh` 在 `~/.zcode/skills/` 下为七个技能与总览创建指向仓库的符号链接——源头只有仓库一份，改仓库即生效。**同一台机器二选一**：插件与符号链接并存会导致技能重复。新开会话后 `/fn-grill` 起步（存量项目 `/fn-refactor`，多项目合并 `/fn-merge`）。
 
 ## 技能清单
 
