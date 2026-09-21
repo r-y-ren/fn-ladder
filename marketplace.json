@@ -8,7 +8,7 @@
     {
       "name": "fn-ladder",
       "description": "五阶段开发流（fn-grill 需求打磨 → fn-divide 函数划分 → fn-scaffold 结构骨架 → fn-implement 分批自底向上实现 → fn-close 收尾核验）+ 两个入口（fn-refactor 存量项目重构、fn-merge 多项目合并）。代码是真值、四态判据、阶段硬门，防 AI 假完成。",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "source": "./"
     }
   ]
