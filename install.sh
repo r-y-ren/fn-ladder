@@ -20,7 +20,7 @@ link() {  # link <仓库内相对路径> <链接名>
   echo "已链接：$2"
 }
 
-for s in fn-grill fn-divide fn-scaffold fn-implement fn-close fn-refactor fn-merge; do
+for s in fn-grill fn-divide fn-scaffold fn-implement fn-close fn-refactor fn-merge fn-review fn-brainstorm fn-analyze; do
   link "skills/$s" "$s"
 done
 link "FN-LADDER.md" "FN-LADDER.md"

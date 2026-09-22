@@ -14,6 +14,8 @@ fn-merge（多项目合并）──┘    需求打磨      函数划分      �
 
 每阶段之间是**硬门**：阶段完毕必须显式提示"下一步命令（`/fn-xxx`）或修订本步骤"，用户不点头不推进；on-ramp 只做自身阶段，出口交给正常流程的单个技能。验收后可进入**功能演进周期**：同一项目追加功能再走一轮五阶段（`fn_docs/` 演化，R/B 编号续号，详见 [FN-LADDER.md](FN-LADDER.md)）。
 
+横向能力随时可用，不占阶段位：`fn-review`（只读审计）· `fn-brainstorm`（卡壳发散）· `fn-analyze`（数据驱动分析与函数级改进提案）。
+
 > **发版纪律**：每次发布提交必须**同步 bump 两处版本号**——`marketplace.json` 的 `plugins[].version` 与 `.zcode-plugin/plugin.json` 的 `version`。只改其一会导致：插件显示旧版本号、或永远提示"可更新"（ZCode 显示的版本取自 plugin.json，更新检测对比 marketplace.json 的版本）。**直接用 `scripts/release.sh <版本号> [说明]` 一步完成**（bump 两处 + JSON 校验 + 提交推送）。
 
 ## 四条不变式（详见 [FN-LADDER.md](FN-LADDER.md)）
@@ -38,11 +40,13 @@ fn-merge（多项目合并）──┘    需求打磨      函数划分      �
 ```
 fn_docs/                          # 流程文档（默认随 git 提交）
 ├── README.md                     # 用户向：工作流程 + 功能（零术语）
-├── requirements.md               # 八节：需求、环境决策、术语、验收方式…
+├── requirements.md               # 八节：需求、术语、验收方式、外部依赖（含结果数据源）…
 ├── responsibility.md             # 概览树 + 覆盖矩阵 + 功能块递归分块
 ├── implementation/               # batches.md（批次表）/ functions.md（状态真值）/ history.md（留痕）
 ├── inventory.md                  # 仅 merge：已实施清单（代码现状快照）
-└── acceptance.md                 # 五道终检事实 + 原始输出
+├── analyses/                     # 仅 analyze：分析报告（含预期信号打分）
+├── results/                      # 仅 analyze：运行结果数据快照
+└── acceptance.md                 # 五道终检事实 + 原始输出（演进周期旧版归档为 acceptance-c<N>.md）
 fn_work/                          # 源码：src/（每顶层函数一文件夹 + shared/）+ tests/ 镜像 + 环境依赖
 ```
 
@@ -58,7 +62,7 @@ git clone https://github.com/r-y-ren/fn-ladder.git ~/Code/fn-ladder
 bash ~/Code/fn-ladder/install.sh
 ```
 
-`install.sh` 在 `~/.zcode/skills/` 下为七个技能与总览创建指向仓库的符号链接——源头只有仓库一份，改仓库即生效。**同一台机器二选一**：插件与符号链接并存会导致技能重复。新开会话后 `/fn-grill` 起步（存量项目 `/fn-refactor`，多项目合并 `/fn-merge`）。
+`install.sh` 在 `~/.zcode/skills/` 下为十个技能与总览创建指向仓库的符号链接——源头只有仓库一份，改仓库即生效。**同一台机器二选一**：插件与符号链接并存会导致技能重复。新开会话后 `/fn-grill` 起步（存量项目 `/fn-refactor`，多项目合并 `/fn-merge`）。
 
 ## 技能清单
 
