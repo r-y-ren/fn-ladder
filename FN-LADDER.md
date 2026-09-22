@@ -24,6 +24,7 @@ fn-merge（多项目合并 on-ramp）──┘      需求打磨        函数�
    | `fn_docs/responsibility.md` | fn-divide | 需求覆盖矩阵、分层函数树（职责/签名意图/调用方/核验命令） |
    | `fn_docs/implementation/` 三文档 | fn-implement | batches.md 批次表（待办导航，▶ 下一批）+ functions.md 函数大表（唯一状态真值：四态+证据+commit）+ history.md 历史表（批次留痕，只追加） |
    | `fn_docs/inventory.md` | fn-merge | 已实施清单（代码现状快照，两步生成：先代码普查后对照责任文档；进入正常流程后只读） |
+   | `fn_docs/results/` + `fn_docs/analyses/<序号>-<日期>.md` | fn-analyze | 运行结果数据快照与分析报告（含历史提案预期信号打分——效果闭环）；数据源定义在 requirements 外部依赖节 |
    | `fn_docs/acceptance.md` | fn-close | 验收报告：五道终检（+merge 源函数去向表）的事实一览与原始输出；终审归用户 |
    | 代码 | fn-scaffold（结构）/ fn-implement（实现） | 最终真值 |
 
@@ -51,7 +52,7 @@ fn-merge（多项目合并 on-ramp）──┘      需求打磨        函数�
   4. **fn-implement**：更新 implementation/ 三文档开始实施——batches.md 追加新批次（B 续号）、functions.md 追加新函数行（改造函数重走四态）；
   5. **fn-close**：全量终检（新旧一起过五道），旧报告归档 `acceptance-c<N>.md`。
 - **补充规则**（链外要点）：历史表保留旧周期记录；终检全量含旧函数与旧需求；已 wired 旧函数不动（结构性调整经快速通道）。
-- **配套**：演进开工前强烈建议先跑 `fn-review` 审计上周期之后的手动改动与文档漂移；策略卡壳用 `fn-brainstorm` 发散。
+- **配套**：演进开工前强烈建议先跑 `fn-review` 审计上周期之后的手动改动与文档漂移；策略卡壳用 `fn-brainstorm` 发散；有运行结果数据（对战/评测/基准）的改进用 `fn-analyze`：拉数据 → 三轴分析（结果/代码机械/职责关联）→ 函数级提案（五字段，含预期信号）→ 效果闭环打分 → 交 grill 开 R。
 - 单任务约束不变：同一时间只有一个活跃周期。
 
 ## 检查脚本与子代理（v1.1）
