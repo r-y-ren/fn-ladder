@@ -14,7 +14,7 @@ fn-merge（多项目合并）──┘    需求打磨      函数划分      �
 
 每阶段之间是**硬门**：阶段完毕必须显式提示"下一步命令（`/fn-xxx`）或修订本步骤"，用户不点头不推进；on-ramp 只做自身阶段，出口交给正常流程的单个技能。验收后可进入**功能演进周期**：同一项目追加功能再走一轮五阶段（`fn_docs/` 演化，R/B 编号续号，详见 [FN-LADDER.md](FN-LADDER.md)）。
 
-> **发版纪律**：每次发布提交必须**同步 bump 两处版本号**——`marketplace.json` 的 `plugins[].version` 与 `.zcode-plugin/plugin.json` 的 `version`。只改其一会导致：插件显示旧版本号、或永远提示"可更新"（ZCode 显示的版本取自 plugin.json，更新检测对比 marketplace.json 的版本）。
+> **发版纪律**：每次发布提交必须**同步 bump 两处版本号**——`marketplace.json` 的 `plugins[].version` 与 `.zcode-plugin/plugin.json` 的 `version`。只改其一会导致：插件显示旧版本号、或永远提示"可更新"（ZCode 显示的版本取自 plugin.json，更新检测对比 marketplace.json 的版本）。**直接用 `scripts/release.sh <版本号> [说明]` 一步完成**（bump 两处 + JSON 校验 + 提交推送）。
 
 ## 四条不变式（详见 [FN-LADDER.md](FN-LADDER.md)）
 
