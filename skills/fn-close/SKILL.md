@@ -9,7 +9,7 @@ description: 当实现清单全员 wired（或用户要求提前验收）、需�
 
 ## 进入检查
 
-`implementation/functions.md` 函数大表全员 wired（用户明确要求提前验收时也可进入，报告中注明未完成项）。中途接手先按 FN-LADDER.md 中途进入协议对账。**功能演进模式**：终检为**全量**（新旧函数与需求一起过五道）；写新报告前，先把现版 acceptance.md 归档为 `acceptance-c<N>.md`（周期序号 c1、c2…）。
+`implementation/functions.md` 函数大表全员 wired（用户明确要求提前验收时也可进入，报告中注明未完成项）。中途接手先按 FN-LADDER.md 中途进入协议对账。**功能演进模式**：终检为**全量**（新旧函数与需求一起过五道）；写新报告前，先把现版 acceptance.md 归档为 `acceptance-c<N>.md`（周期序号 c1、c2…）。此归档是验收报告唯一的周期性挪动，不与"fn_docs 原地保留"冲突——其余文档与旧归档一律不动。
 
 ## 五道终检（全过才算完成）
 
