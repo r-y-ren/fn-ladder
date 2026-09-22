@@ -9,7 +9,7 @@ description: 当责任文档（responsibility.md）经用户确认、需要生�
 
 ## 进入检查
 
-`responsibility.md` 存在且经用户确认。中途接手：grep 桩标记判断骨架是否已生成，已生成则直接指路 fn-implement。
+`responsibility.md` 存在且经用户确认。中途接手：grep 桩标记判断骨架是否已生成，已生成则直接指路 fn-implement。**功能演进模式**：只为新函数加桩，已 wired 的存量代码一律不动（比"存量只增不删"更严：演进周期里旧桩位早已是真实现）。
 
 ## 动作
 

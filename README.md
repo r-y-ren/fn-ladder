@@ -12,7 +12,7 @@ fn-refactor（存量项目）─┐
 fn-merge（多项目合并）──┘    需求打磨      函数划分      结构+骨架       分批自底向上实现    收尾核验
 ```
 
-每阶段之间是**硬门**：阶段完毕必须显式提示"下一步命令（`/fn-xxx`）或修订本步骤"，用户不点头不推进；on-ramp 只做自身阶段，出口交给正常流程的单个技能。
+每阶段之间是**硬门**：阶段完毕必须显式提示"下一步命令（`/fn-xxx`）或修订本步骤"，用户不点头不推进；on-ramp 只做自身阶段，出口交给正常流程的单个技能。验收后可进入**功能演进周期**：同一项目追加功能再走一轮五阶段（`fn_docs/` 演化，R/B 编号续号，详见 [FN-LADDER.md](FN-LADDER.md)）。
 
 > **发版纪律**：每次发布提交必须**同步 bump 两处版本号**——`marketplace.json` 的 `plugins[].version` 与 `.zcode-plugin/plugin.json` 的 `version`。只改其一会导致：插件显示旧版本号、或永远提示"可更新"（ZCode 显示的版本取自 plugin.json，更新检测对比 marketplace.json 的版本）。
 
@@ -70,3 +70,5 @@ bash ~/Code/fn-ladder/install.sh
 | fn-close | ⑤ 五道终检 + 验收报告 | 终审归用户 |
 | fn-refactor | on-ramp：存量项目（两轮 grill + 快照安全网） | `/fn-divide` |
 | fn-merge | on-ramp：多项目合并（inventory → 合并需求 → 汇总责任） | `/fn-scaffold` |
+| fn-review | 审计（随叫随到，只读不写）：机械轴 + 规格轴双轴审查代码与文档一致性 | 指回对应回路 |
+| fn-brainstorm | 卡壳发散（blocked / 方案返工 / 想不清）：≥3 方案含激进项 + 推荐 | 指回对应回路 |

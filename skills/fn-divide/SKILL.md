@@ -9,7 +9,7 @@ description: 当需求文档（requirements.md）已就绪、需要把任务划�
 
 ## 进入检查
 
-`fn_docs/requirements.md` 必须存在且经用户确认。没有 → 停，指回 fn-grill。中途接手先按 FN-LADDER.md 中途进入协议对账。
+`fn_docs/requirements.md` 必须存在且经用户确认。没有 → 停，指回 fn-grill。中途接手先按 FN-LADDER.md 中途进入协议对账。**功能演进模式**（fn_docs 有 acceptance.md）：在既有责任文档上**只增不改旧块**——矩阵加行、函数树加新功能块；已 wired 的旧函数不动（结构性调整需经快速通道并留变更说明）。
 
 ## 划法
 
