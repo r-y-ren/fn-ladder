@@ -16,7 +16,7 @@ fn-merge（多项目合并）──┘    需求打磨      函数划分      �
 
 横向能力随时可用，不占阶段位：`fn-review`（只读审计）· `fn-brainstorm`（卡壳发散+判据再质疑）· `fn-analyze`（数据驱动分析与函数级改进提案，含**冲刺模式**）。单函数/参数级小手术走**轻量线**（内置 `fn-grill`/`fn-analyze`，快问→实现→核验→fn-commit 落痕；`fn-quick` 保留为兼容路由）。
 
-> **发版纪律**：每次发布提交必须**同步 bump 两处版本号**——`marketplace.json` 的 `plugins[].version` 与 `.zcode-plugin/plugin.json` 的 `version`。只改其一会导致：插件显示旧版本号、或永远提示"可更新"（ZCode 显示的版本取自 plugin.json，更新检测对比 marketplace.json 的版本）。**直接用 `scripts/release.sh <版本号> [说明]` 一步完成**（bump 两处 + JSON 校验 + 提交推送）。
+> **发版纪律**：每次发布提交必须**同步 bump 两处版本号**——`marketplace.json` 的 `plugins[].version` 与 `.zcode-plugin/plugin.json` 的 `version`。只改其一会导致：插件显示旧版本号、或永远提示"可更新"（ZCode 显示的版本取自 plugin.json，更新检测对比 marketplace.json 的版本）。**直接用 `scripts/release.sh <版本号> [说明]` 一步完成**（发版前机器检查 + bump 两处 + JSON 校验 + 版本双轨一致 + 提交推送）。**机器检查**（`release.sh --check` 可独立跑）：退役术语零残留（术语变更在 release.sh 退役术语表登记）、技能清单 skills/ ↔ install.sh 双向一致、版本双轨一致——命中即中止，不带病发版。
 
 ## 四条不变式（详见 [FN-LADDER.md](FN-LADDER.md)）
 
