@@ -70,7 +70,10 @@ bash ~/Code/fn-ladder/install.sh
 
 `install.sh` 在 `~/.zcode/skills/` 下为十一个技能与总览创建指向仓库的符号链接——源头只有仓库一份，改仓库即生效。**同一台机器二选一**：插件与符号链接并存会导致技能重复。
 
-**方式三（其他 Agent Skills 客户端）**：Claude Code、Codex CLI、Gemini CLI、Cursor、opencode 等——把 [INSTALL.md](INSTALL.md) 交给你的 agent 执行：复制技能到目标客户端技能目录，并修补副本（脚本路径、调用语法、能力措辞）。源仓库不作任何修改。
+**方式三（其他 Agent Skills 客户端）**：Claude Code、Codex CLI、Gemini CLI、Cursor、opencode 等。
+
+- 快速安装：`npx skills add r-y-ren/fn-ladder`——一键装入你机器上已检测到的客户端。注意：按技能安装不会带上仓库根的检查脚本（`scripts/fn-check.sh` 等）与 `FN-LADDER.md` 总览；要完整体验请执行下面的适配。
+- 完整适配：把 [INSTALL.md](INSTALL.md) 交给你的 agent 执行——复制技能到目标客户端技能目录，并修补副本（脚本路径、调用语法、能力措辞）。源仓库不作任何修改。
 
 新开会话后 `/fn-grill` 起步（存量项目 `/fn-refactor`，多项目合并 `/fn-merge`）。
 

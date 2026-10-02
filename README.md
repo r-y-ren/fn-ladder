@@ -70,7 +70,10 @@ bash ~/Code/fn-ladder/install.sh
 
 `install.sh` symlinks the eleven skills and the hub doc into `~/.zcode/skills/` — one source of truth, edits to the repo take effect immediately. **Pick one per machine**: plugin and symlink together duplicate the skills.
 
-**Option 3 — other Agent Skills clients** (Claude Code, Codex CLI, Gemini CLI, Cursor, opencode, …): hand [INSTALL.md](INSTALL.md) to your agent — it copies the skills into your client's skill directory and patches the copies (script paths, invocation syntax, capability wording). The source repo is never modified.
+**Option 3 — other Agent Skills clients** (Claude Code, Codex CLI, Gemini CLI, Cursor, opencode, …):
+
+- Quick install: `npx skills add r-y-ren/fn-ladder` — installs the skills onto every detected client on your machine. Note that per-skill installs do not carry the repo-root check scripts (`scripts/fn-check.sh` …) or the `FN-LADDER.md` hub; for the full experience run the adaptation below.
+- Full adaptation: hand [INSTALL.md](INSTALL.md) to your agent — it copies the skills into your client's skill directory and patches the copies (script paths, invocation syntax, capability wording). The source repo is never modified.
 
 Start a fresh session with `/fn-grill` (legacy project: `/fn-refactor`; merging projects: `/fn-merge`).
 
