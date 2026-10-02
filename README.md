@@ -14,7 +14,7 @@ fn-merge（多项目合并）──┘    需求打磨      函数划分      �
 
 每阶段之间是**硬门**：阶段完毕必须显式提示"下一步命令（`/fn-xxx`）或修订本步骤"，用户不点头不推进；on-ramp 只做自身阶段，出口交给正常流程的单个技能。验收后可进入**功能演进周期**：同一项目追加功能再走一轮五阶段（`fn_docs/` 演化，R/B 编号续号，详见 [FN-LADDER.md](FN-LADDER.md)）。
 
-横向能力随时可用，不占阶段位：`fn-review`（只读审计）· `fn-brainstorm`（卡壳发散）· `fn-analyze`（数据驱动分析与函数级改进提案）。单函数/参数级小手术走轻量臂 **`fn-quick`**（快问→实现→核验→fn-commit 落痕）。
+横向能力随时可用，不占阶段位：`fn-review`（只读审计）· `fn-brainstorm`（卡壳发散+判据再质疑）· `fn-analyze`（数据驱动分析与函数级改进提案，含**冲刺模式**）。单函数/参数级小手术走**轻量线**（内置 `fn-grill`/`fn-analyze`，快问→实现→核验→fn-commit 落痕；`fn-quick` 保留为兼容路由）。
 
 > **发版纪律**：每次发布提交必须**同步 bump 两处版本号**——`marketplace.json` 的 `plugins[].version` 与 `.zcode-plugin/plugin.json` 的 `version`。只改其一会导致：插件显示旧版本号、或永远提示"可更新"（ZCode 显示的版本取自 plugin.json，更新检测对比 marketplace.json 的版本）。**直接用 `scripts/release.sh <版本号> [说明]` 一步完成**（bump 两处 + JSON 校验 + 提交推送）。
 
@@ -45,10 +45,13 @@ fn_docs/                          # 流程文档（默认随 git 提交）
 ├── implementation/               # batches.md（批次表）/ functions.md（状态真值）/ history.md（留痕）
 ├── inventory.md                  # 仅 merge：已实施清单（代码现状快照）
 ├── analyses/                     # 仅 analyze：分析报告（哈希定名）+ registry.jsonl 提案登记表
-├── results/                      # 仅 analyze：运行结果数据快照
+├── results/                      # 仅 analyze：运行结果快照（全量保留=AI 纠错依据）
+├── vendor/                       # 外来拉取件户口：provenance 六字段 + SHA + 上游 LICENSE/NOTICE + payload
 ├── JOURNAL.md                    # 过程流水（fn-commit 追加，任何执行者可写）
-└── acceptance.md                 # 五道终检事实 + 原始输出（演进周期旧版归档为 acceptance-c<N>.md）
+└── acceptance.md                 # 六道终检事实 + 原始输出（演进周期旧版归档为 acceptance-c<N>.md）
 fn_work/                          # 源码：src/（每顶层函数一文件夹 + shared/）+ tests/ 镜像 + 环境依赖
+└── <lab>/evidence/               # 代码邻接运行结果（规则同 results/：全量保留）
+.scratch/                         # 暂存区（gitignore）：拉件/大语料/代理工作目录；禁系统 /tmp；验收清点
 ```
 
 ## 安装
@@ -73,10 +76,10 @@ bash ~/Code/fn-ladder/install.sh
 | fn-divide | ② 函数划分（责任文档） | `/fn-scaffold` |
 | fn-scaffold | ③ 结构 + 骨架（fn_work/、统一桩） | `/fn-implement` |
 | fn-implement | ④ 垂直切片分批、自底向上四态 | 批间门三项 / `/fn-close` |
-| fn-close | ⑤ 五道终检 + 验收报告 | 终审归用户 |
+| fn-close | ⑤ 六道终检 + 验收报告（交付型含可选外发三验） | 终审归用户 |
 | fn-refactor | on-ramp：存量项目（两轮 grill + 快照安全网） | `/fn-divide` |
 | fn-merge | on-ramp：多项目合并（inventory → 合并需求 → 汇总责任） | `/fn-scaffold` |
 | fn-review | 审计（随叫随到，只读不写）：机械轴 + 规格轴双轴审查代码与文档一致性 | 指回对应回路 |
 | fn-brainstorm | 卡壳发散（blocked / 方案返工 / 想不清）：≥3 方案含激进项 + 推荐 | 指回对应回路 |
 | fn-analyze | 数据驱动改进（拉运行结果→三轴分析→函数级提案→效果闭环打分） | 提案交 `/fn-grill` |
-| fn-quick | 轻量臂：单函数/参数级手术（快问→实现→核验→fn-commit） | `/fn-quick` 或升 `/fn-grill` |
+| fn-quick | 兼容路由（v1.6 退役）：轻量线已内置 fn-grill/fn-analyze，执行时必标注线别 | 继续轻量项或升全量线 |
