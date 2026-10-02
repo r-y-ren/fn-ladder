@@ -26,7 +26,8 @@ fn-merge（多项目合并 on-ramp）──┘      需求打磨        函数�
    | `fn_docs/responsibility.md` | fn-divide | 需求覆盖矩阵、分层函数树（职责/签名意图/调用方/核验命令） |
    | `fn_docs/implementation/` 三文档 | fn-implement | batches.md 批次表（待办导航，▶ 下一批）+ functions.md 函数大表（唯一状态真值：四态+证据+commit）+ history.md 历史表（批次留痕，只追加） |
    | `fn_docs/inventory.md` | fn-merge | 已实施清单（代码现状快照，两步生成：先代码普查后对照责任文档；进入正常流程后只读） |
-   | `fn_docs/results/` + `fn_docs/analyses/<序号>-<日期>.md` | fn-analyze | 运行结果数据快照与分析报告（含历史提案预期信号打分——效果闭环）；数据源定义在 requirements 外部依赖节 |
+   | `fn_docs/results/` + `fn_docs/analyses/<日期>-<哈希>.md` + `analyses/registry.jsonl` | fn-analyze | 运行结果快照、分析报告（哈希定名防并发撞车）与提案登记表（机器可读真值，fn-score.py 打分）；数据源定义在 requirements 外部依赖节 |
+   | `fn_docs/JOURNAL.md` | 任何执行者（经 fn-commit） | 过程流水：一行一事件，与结构化文档互补 |
    | `fn_docs/acceptance.md` | fn-close | 验收报告：五道终检（+merge 源函数去向表）的事实一览与原始输出；终审归用户 |
    | 代码 | fn-scaffold（结构）/ fn-implement（实现） | 最终真值 |
 
@@ -57,11 +58,17 @@ fn-merge（多项目合并 on-ramp）──┘      需求打磨        函数�
 - **配套**：演进开工前强烈建议先跑 `fn-review` 审计上周期之后的手动改动与文档漂移；策略卡壳用 `fn-brainstorm` 发散；有运行结果数据（对战/评测/基准）的改进用 `fn-analyze`：拉数据 → 三轴分析（结果/代码机械/职责关联）→ 函数级提案（五字段，含预期信号）→ 效果闭环打分 → 交 grill 开 R。
 - 单任务约束不变：同一时间只有一个活跃周期。
 
+## 轻量臂（v1.4）
+
+单函数/参数级手术走 `fn-quick`：快问（目的一句话+验收一条）→ 实现+核验 → `fn-commit.sh` 落痕。**纪律不降（判据先行、核验贴输出、必落痕），仪式降**（不建责任全树、无批间门）；超载即升全套。JOURNAL-only 的 `fn_docs/` 不算任务进度。
+
 ## 检查脚本与子代理（v1.1）
 
 - **脚本**（插件根 `scripts/`，技能一律"跑脚本、贴输出"，铁律不变）：
   - `fn-check.sh`——代码侧三件套：残留桩 grep、全量测试（FN_TEST_CMD 或自动探测）、tests 镜像抽查。
   - `fn-doc-lint.py`——文档侧机械校验：requirements 八节与 R 编号、functions 状态词与函数覆盖、batches ▶ 唯一与批次/历史不重叠、responsibility 树块一致、矩阵双向、函数名唯一、调用链可达到入口（死代码拦截）。
+  - `fn-score.py`——提案登记表打分器：工作台列 pending 提案与最新快照，`--set` 落打分状态（判定归人，脚本出数）。
+  - `fn-commit.sh`——一键落痕：JOURNAL 行 + commit + push（轻量臂与冲刺的收尾仪式）。
 - **子代理**：①**对账子代理**——fn-implement 进入时派，跑 fn-check 并对照 functions.md，主会话只收结论（隔离对账输出）；②**评审子代理**——批间门前派，双轴审查批 diff（规格轴 vs 责任文档 / 标准轴：桩标记、命名、目录规则），用户可免审；③**逐函数实现子代理**——可选档，单批 ≥6 函数建议，每函数带紧凑提示（职责块+桩位置+核验命令），主会话只做调度与门。
 - **钩子**：v1 不配——强制力的终点是 workflow 固化，不在半山腰重复建设；真实任务暴露"模型跳步"案例后再议。
 

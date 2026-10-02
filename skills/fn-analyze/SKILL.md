@@ -32,8 +32,10 @@ description: 当有可自动拉取的运行结果数据（如 Kaggle 对战数�
    - 分流：参数/逻辑级（[改造] 现有函数）vs 结构性（回 fn-divide）
    ```
 
-4. **效果闭环打分（铁律）**：对历史全部提案的预期信号逐条打分——**达成 / 未达成 / 反向**；未达成或反向 → 建议转 `/fn-brainstorm`（方案失效换思路）。
-5. **报告落盘** `fn_docs/analyses/<序号>-<日期>.md`（本技能独占写——横向技能中唯一写盘者，理由：改进效果闭环需要历史对比）；必含"上次快照 vs 本次"对比节。
+   每条提案**同时登记进 `fn_docs/analyses/registry.jsonl`**（一提案一行 JSON：id / date / phenomenon / target / expected_signal / status / scored_in）——机器可读的唯一提案真值，id 形如 `<报告哈希前6位>-<n>`。
+
+4. **效果闭环打分（铁律，由 `scripts/fn-score.py` 承载）**：跑打分工作台（列 pending 提案与最新 results/ 快照）→ 按预期信号判定 → `--set <id> <achieved|missed|reversed>` 落 registry。**打分表不许手翻旧文档手写**——脚本出差分，判定归人。未达成或反向 → 建议转 `/fn-brainstorm`（方案失效换思路）。
+5. **报告落盘** `fn_docs/analyses/<YYYY-MM-DD>-<内容SHA1前6位>.md`（写盘后计算定名——两会话并发天然不撞，废除人肉数序号）；必含"上次快照 vs 本次"对比节与打分表（贴 fn-score.py 工作台输出）。
 
 ## 出口
 
@@ -47,3 +49,4 @@ description: 当有可自动拉取的运行结果数据（如 Kaggle 对战数�
 | "现象很明显，不用引数字了" | 现象必须有快照对比的具体数字，防印象流分析 |
 | "这个函数看起来可疑" | 定位必须经责任文档职责链，不许跳过关联直接猜 |
 | "上次提案就不打分了" | 效果闭环是铁律——不打分的改进循环是盲飞 |
+| "打分表我顺手整理一下" | registry + fn-score.py 是真值，手写表必漂移 |
