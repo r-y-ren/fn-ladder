@@ -50,7 +50,7 @@ fn_docs/                          # 流程文档（默认随 git 提交）
 ├── JOURNAL.md                    # 过程流水（fn-commit 追加，任何执行者可写）
 └── acceptance.md                 # 六道终检事实 + 原始输出（演进周期旧版归档为 acceptance-c<N>.md）
 fn_work/                          # 源码：src/（每顶层函数一文件夹 + shared/）+ tests/ 镜像 + 环境依赖
-└── <lab>/evidence/               # 代码邻接运行结果（规则同 results/：全量保留）
+│   └── <lab>/evidence/           # 代码邻接运行结果（规则同 results/：全量保留）
 .scratch/                         # 暂存区（gitignore）：拉件/大语料/代理工作目录；禁系统 /tmp；验收清点
 ```
 

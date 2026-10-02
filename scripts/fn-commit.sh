@@ -2,7 +2,8 @@
 # fn-commit.sh —— 一键落痕：JOURNAL 行 + git commit + push（轻量线与冲刺的收尾仪式）
 # 用法（在任务工作目录下运行）:
 #   fn-commit.sh "<阶段> <一行摘要>" ["<核验结果>"]
-# 例: fn-commit.sh "quick 把 temperature 参数 0.8→0.6" "对战脚本 → 胜率 52%（-k 100 局）"
+# 阶段词约定（线别落痕）：轻量线步骤写 "轻量线"，全量线写 "全量线:<阶段>"（如 全量线:implement）
+# 例: fn-commit.sh "轻量线 把 temperature 参数 0.8→0.6" "对战脚本 → 胜率 52%（-k 100 局）"
 set -euo pipefail
 
 ENTRY="${1:?用法: fn-commit.sh '<阶段> <一行摘要>' ['<核验结果>']（在任务工作目录下运行）}"
