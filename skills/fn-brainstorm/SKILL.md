@@ -1,6 +1,7 @@
 ---
 name: fn-brainstorm
-description: 当 fn-ladder 流程中策略卡壳需要发散创意时使用——blocked 裁决"换方案"、方案级返工、或 grill 阶段想不清。用户提到 fn-brainstorm、发散一下、换个思路时也用。
+description: Use when the fn-ladder flow is stuck and ideas must diverge — a blocked ruling calls for changing the approach, a plan-level rework, or the grill stage cannot see clearly. Also use when the user mentions fn-brainstorm, brainstorm, or try a different angle. 当 fn-ladder 流程中策略卡壳需要发散创意时使用——blocked 裁决「换方案」、方案级返工、或 grill 阶段想不清。用户提到 fn-brainstorm、发散一下、换个思路时也用。
+license: MIT
 ---
 
 # fn-brainstorm：卡壳创意（fn-ladder 发散器）

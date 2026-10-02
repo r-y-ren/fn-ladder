@@ -1,6 +1,7 @@
 ---
 name: fn-scaffold
-description: 当责任文档（responsibility.md）经用户确认、需要生成工程文件结构与函数骨架时使用——fn-ladder 流程第三阶段（结构与骨架）。用户提到 fn-scaffold、搭骨架、生成结构时也用。
+description: Use when responsibility.md is confirmed by the user and the project structure plus function skeletons must be generated — fn-ladder stage 3 (structure and skeleton). Also use when the user mentions fn-scaffold, scaffold it, or generate the structure. 当责任文档（responsibility.md）经用户确认、需要生成工程文件结构与函数骨架时使用——fn-ladder 流程第三阶段（结构与骨架）。用户提到 fn-scaffold、搭骨架、生成结构时也用。
+license: MIT
 ---
 
 # fn-scaffold：结构与骨架（fn-ladder 第③阶段）

@@ -1,85 +1,95 @@
-# fn-ladder 函数阶梯
+# fn-ladder — the function-ladder skill suite
 
-以**函数为颗粒度**的 AI 编程开发流技能套件，用来防"AI 假完成"——AI 自称做完，实际漏实现、或函数存在但没接线。
+**English** · [中文](README.zh-CN.md)
 
-为 ZCode 的 Agent Skills 机制设计（`~/.zcode/skills/`），符号链接方式同样适用于其他兼容技能目录的运行时。
+An AI coding workflow of **function-granular** skills that prevents "AI fake completion" — the model claims the task is done while functions are missing or never wired up.
 
-## 流程
+Built for **ZCode first** (plugin marketplace / `~/.zcode/skills/`). Other Agent Skills–compliant clients (Claude Code, Codex CLI, Gemini CLI, Cursor, opencode, …) are supported through a one-time copy-and-patch install — hand [INSTALL.md](INSTALL.md) to your agent. The skill bodies keep ZCode idioms on purpose; adaptation happens in your own environment, never in this repo.
 
-```
-fn-refactor（存量项目）─┐
-                        ├──> fn-grill ──> fn-divide ──> fn-scaffold ──> fn-implement ──> fn-close
-fn-merge（多项目合并）──┘    需求打磨      函数划分      结构+骨架       分批自底向上实现    收尾核验
-```
-
-每阶段之间是**硬门**：阶段完毕必须显式提示"下一步命令（`/fn-xxx`）或修订本步骤"，用户不点头不推进；on-ramp 只做自身阶段，出口交给正常流程的单个技能。验收后可进入**功能演进周期**：同一项目追加功能再走一轮五阶段（`fn_docs/` 演化，R/B 编号续号，详见 [FN-LADDER.md](FN-LADDER.md)）。
-
-横向能力随时可用，不占阶段位：`fn-review`（只读审计）· `fn-brainstorm`（卡壳发散+判据再质疑）· `fn-analyze`（数据驱动分析与函数级改进提案，含**冲刺模式**）。单函数/参数级小手术走**轻量线**（内置 `fn-grill`/`fn-analyze`，快问→实现→核验→fn-commit 落痕；`fn-quick` 保留为兼容路由）。
-
-> **发版纪律**：每次发布提交必须**同步 bump 两处版本号**——`marketplace.json` 的 `plugins[].version` 与 `.zcode-plugin/plugin.json` 的 `version`。只改其一会导致：插件显示旧版本号、或永远提示"可更新"（ZCode 显示的版本取自 plugin.json，更新检测对比 marketplace.json 的版本）。**直接用 `scripts/release.sh <版本号> [说明]` 一步完成**（发版前机器检查 + bump 两处 + JSON 校验 + 版本双轨一致 + 提交推送）。**机器检查**（`release.sh --check` 可独立跑）：退役术语零残留（术语变更在 release.sh 退役术语表登记）、技能清单 skills/ ↔ install.sh 双向一致、版本双轨一致——命中即中止，不带病发版。
-
-## 四条不变式（详见 [FN-LADDER.md](FN-LADDER.md)）
-
-1. **代码是真值，文档是导航**——改任何状态标注前必须先跑核验命令、贴出输出。
-2. **阶段硬门**——显式提示下一步命令或修订，未选择不推进。
-3. **文档所有权分离**——每份文档只有一个写入阶段，其他阶段只读。
-4. **中途进入靠对账**——不靠对话记忆，接手时先跑全局核验与文档对账。
-
-## 防假完成机制
-
-- 函数四态判据：`stub → implemented → tested → wired`（叶子必自有单测；wired = 调用点存在、顶层实跑）；
-- 需求覆盖矩阵双向拦截：没函数负责的需求 = 漏实现；连不到入口的函数 = 死代码；
-- 骨架优先：统一桩标记 `unimplemented:fn:<名>`，剩余工作由代码自己报告；
-- 验收报告只贴事实与原始输出，终审归用户；
-- **效果闭环**：改进的验收延伸到运行结果——fn-analyze 对历史提案的"预期信号"逐条打分（达成/未达成/反向），防"功能验收通过但分数没涨"的合法假完成；
-- **检查脚本**（`scripts/`）：`fn-check.sh`（代码侧三件套）与 `fn-doc-lint.py`（文档侧机械校验）、`fn-score.py`（提案登记表打分）、`fn-commit.sh`（JOURNAL 落痕 + commit + push）——机械检查交给脚本，不靠模型肉眼；
-- **子代理**：对账子代理（隔离对账输出）、批间评审子代理（双轴审查批 diff，可免审）、逐函数实现子代理（可选档，大批发）。
-
-## 任务产物
+## Workflow
 
 ```
-fn_docs/                          # 流程文档（默认随 git 提交）
-├── README.md                     # 用户向：工作流程 + 功能（零术语）
-├── requirements.md               # 八节：需求、术语、验收方式、外部依赖（含结果数据源）…
-├── responsibility.md             # 概览树 + 覆盖矩阵 + 功能块递归分块
-├── implementation/               # batches.md（批次表）/ functions.md（状态真值）/ history.md（留痕）
-├── inventory.md                  # 仅 merge：已实施清单（代码现状快照）
-├── analyses/                     # 仅 analyze：分析报告（哈希定名）+ registry.jsonl 提案登记表
-├── results/                      # 仅 analyze：运行结果快照（全量保留=AI 纠错依据）
-├── vendor/                       # 外来拉取件户口：provenance 六字段 + SHA + 上游 LICENSE/NOTICE + payload
-├── JOURNAL.md                    # 过程流水（fn-commit 追加，任何执行者可写）
-└── acceptance.md                 # 六道终检事实 + 原始输出（演进周期旧版归档为 acceptance-c<N>.md）
-fn_work/                          # 源码：src/（每顶层函数一文件夹 + shared/）+ tests/ 镜像 + 环境依赖
-│   └── <lab>/evidence/           # 代码邻接运行结果（规则同 results/：全量保留）
-.scratch/                         # 暂存区（gitignore）：拉件/大语料/代理工作目录；禁系统 /tmp；验收清点
+fn-refactor (legacy project) ─┐
+                               ├──> fn-grill ──> fn-divide ──> fn-scaffold ──> fn-implement ──> fn-close
+fn-merge (multi-project merge) ┘    requirements   function decomp.  structure    bottom-up batches   close-out
 ```
 
-## 安装
+Each stage boundary is a **hard gate**: the skill presents its output and **stops**, offering exactly two options — the next command (`/fn-xxx`) or revising this step — and never proceeds without the user's explicit choice. On-ramps (fn-refactor / fn-merge) do only their own stage and hand over to the normal chain. After acceptance you can start an **evolution cycle**: add features to the same project and run the five stages again on the same `fn_docs/` (see [FN-LADDER.md](FN-LADDER.md)).
 
-**方式一（推荐，ZCode 插件）**：Settings → Plugin Management → Discover → `+` 添加市场
-`https://github.com/r-y-ren/fn-ladder.git`，安装 **fn-ladder** 插件。
+Lateral skills are available any time, outside the stage chain: `fn-review` (read-only audit) · `fn-brainstorm` (ideation when stuck + criterion re-questioning) · `fn-analyze` (data-driven analysis and function-level improvement proposals, incl. **sprint mode**). Parameter-level / single-function surgery goes through the **lightweight line** (built into `fn-grill`/`fn-analyze`; `fn-quick` remains as a compatibility router).
 
-**方式二（符号链接，适合直接改仓库开发）**：
+> **Release discipline** — the version number has a single source: run `scripts/release.sh <version> [note]` to do everything (preflight machine checks → bump both ZCode manifests → JSON validation → CHANGELOG check → commit → tag → push). ZCode displays the version from `plugin.json` and checks updates against `marketplace.json`, so both must stay equal. **Machine checks** (`release.sh --check` runs standalone): retired-terminology zero-residue (retirements registered in release.sh's table), skill list `skills/` ↔ `install.sh` two-way consistency, dual-manifest version consistency, LICENSE + per-skill `license` fields present, CHANGELOG contains the version — any hit aborts the release.
+
+## Four invariants (see [FN-LADDER.md](FN-LADDER.md))
+
+1. **Code is the truth, docs are the navigation** — before changing any status marker, run the verification command and paste its output.
+2. **Stage hard gates** — stop and offer "next command or revise"; never advance without an explicit user choice.
+3. **Document ownership** — each document has exactly one writing stage; all other stages are read-only.
+4. **Mid-entry by reconciliation** — never rely on conversation memory; on resuming, re-run global checks and reconcile against the documents.
+
+## Anti-fake-completion mechanisms
+
+- Four-state function criteria: `stub → implemented → tested → wired` (leaf functions need their own green unit test; wired = call sites exist and the top entry actually runs);
+- Requirement-coverage matrix blocks both ways: a requirement with no owning function = missed implementation; a function unreachable from any entry = dead code;
+- Skeleton-first: unified stub marker `unimplemented:fn:<name>`, so remaining work is reported by the code itself;
+- Acceptance reports paste facts and raw outputs only; the final verdict belongs to the user;
+- **Effect closed-loop**: acceptance extends to run results — fn-analyze scores each historical proposal's "expected signal" (achieved / missed / reversed), catching the "tests pass but the score didn't move" form of legal fake completion;
+- **Check scripts** (`scripts/`): `fn-check.sh` (code-side trio), `fn-doc-lint.py` (mechanical doc validation), `fn-score.py` (proposal-registry scoring), `fn-commit.sh` (JOURNAL entry + commit + push) — mechanical checks go to scripts, not the model's eyes;
+- **Subagents**: reconciliation subagent (isolates reconciliation output), per-batch review subagent (dual-axis diff review, waivable), per-function implementation subagent (optional tier for large batches).
+
+## Task artifacts
+
+```
+fn_docs/                          # process docs (committed with git by default)
+├── README.md                     # user-facing: workflow + features (jargon-free)
+├── requirements.md               # eight sections: requirements, terms, acceptance, external deps (incl. result data sources)…
+├── responsibility.md             # overview tree + coverage matrix + recursive function blocks
+├── implementation/               # batches.md (batch table) / functions.md (status truth) / history.md (log)
+├── inventory.md                  # merge only: implemented inventory (code-reality snapshot)
+├── analyses/                     # analyze only: analysis reports (hash-named) + registry.jsonl proposal ledger
+├── results/                      # analyze only: run-result snapshots (keep all — the AI's error-correction evidence)
+├── vendor/                       # third-party pull provenance: six fields + SHA + upstream LICENSE/NOTICE + payload
+├── JOURNAL.md                    # running log (appended via fn-commit; any executor may write)
+└── acceptance.md                 # six final checks' facts + raw output (old cycles archived as acceptance-c<N>.md)
+fn_work/                          # source: src/ (one folder per top-level function + shared/) + mirrored tests/ + env deps
+│   └── <lab>/evidence/           # code-adjacent run results (same rule as results/: keep all)
+.scratch/                         # staging (gitignored): pulls / big corpora / agent workdirs; no system /tmp; settled at acceptance
+```
+
+## Installation
+
+**Option 1 (recommended) — ZCode plugin**: Settings → Plugin Management → Discover → `+` add marketplace
+`https://github.com/r-y-ren/fn-ladder.git`, then install the **fn-ladder** plugin.
+
+**Option 2 — symlink (for developing against the repo directly)**:
 
 ```bash
 git clone https://github.com/r-y-ren/fn-ladder.git ~/Code/fn-ladder
 bash ~/Code/fn-ladder/install.sh
 ```
 
-`install.sh` 在 `~/.zcode/skills/` 下为十一个技能与总览创建指向仓库的符号链接——源头只有仓库一份，改仓库即生效。**同一台机器二选一**：插件与符号链接并存会导致技能重复。新开会话后 `/fn-grill` 起步（存量项目 `/fn-refactor`，多项目合并 `/fn-merge`）。
+`install.sh` symlinks the eleven skills and the hub doc into `~/.zcode/skills/` — one source of truth, edits to the repo take effect immediately. **Pick one per machine**: plugin and symlink together duplicate the skills.
 
-## 技能清单
+**Option 3 — other Agent Skills clients** (Claude Code, Codex CLI, Gemini CLI, Cursor, opencode, …): hand [INSTALL.md](INSTALL.md) to your agent — it copies the skills into your client's skill directory and patches the copies (script paths, invocation syntax, capability wording). The source repo is never modified.
 
-| 技能 | 阶段 | 出口 |
+Start a fresh session with `/fn-grill` (legacy project: `/fn-refactor`; merging projects: `/fn-merge`).
+
+## Skills
+
+| Skill | Stage | Exit |
 |---|---|---|
-| fn-grill | ① 需求打磨（轮次/前沿逼问，必问八条） | `/fn-divide` |
-| fn-divide | ② 函数划分（责任文档） | `/fn-scaffold` |
-| fn-scaffold | ③ 结构 + 骨架（fn_work/、统一桩） | `/fn-implement` |
-| fn-implement | ④ 垂直切片分批、自底向上四态 | 批间门三项 / `/fn-close` |
-| fn-close | ⑤ 六道终检 + 验收报告（交付型含可选外发三验） | 终审归用户 |
-| fn-refactor | on-ramp：存量项目（两轮 grill + 快照安全网） | `/fn-divide` |
-| fn-merge | on-ramp：多项目合并（inventory → 合并需求 → 汇总责任） | `/fn-scaffold` |
-| fn-review | 审计（随叫随到，只读不写）：机械轴 + 规格轴双轴审查代码与文档一致性 | 指回对应回路 |
-| fn-brainstorm | 卡壳发散（blocked / 方案返工 / 想不清）：≥3 方案含激进项 + 推荐 | 指回对应回路 |
-| fn-analyze | 数据驱动改进（拉运行结果→三轴分析→函数级提案→效果闭环打分） | 提案交 `/fn-grill` |
-| fn-quick | 兼容路由（v1.6 退役）：轻量线已内置 fn-grill/fn-analyze，执行时必标注线别 | 继续轻量项或升全量线 |
+| fn-grill | ① requirements capture (rounds / frontier interrogation, eight must-asks) | `/fn-divide` |
+| fn-divide | ② function decomposition (responsibility document) | `/fn-scaffold` |
+| fn-scaffold | ③ structure + skeleton (fn_work/, unified stubs) | `/fn-implement` |
+| fn-implement | ④ vertical-slice batches, bottom-up four states | batch gate (3 options) / `/fn-close` |
+| fn-close | ⑤ six final checks + acceptance report (delivery tasks get optional external triple-check) | verdict to the user |
+| fn-refactor | on-ramp: legacy project (two grill rounds + snapshot safety net) | `/fn-divide` |
+| fn-merge | on-ramp: multi-project merge (inventory → merged requirements → merged responsibility) | `/fn-scaffold` |
+| fn-review | audit (on demand, read-only): mechanical + spec axes over code and docs | back to the matching loop |
+| fn-brainstorm | ideation when stuck (blocked / plan rework / can't see clearly): ≥3 options incl. a radical one | back to the matching loop |
+| fn-analyze | data-driven improvement (pull results → three-axis analysis → function-level proposals → effect scoring) | proposals to `/fn-grill` |
+| fn-quick | compatibility router (retired in v1.6): lightweight line now lives in fn-grill/fn-analyze; always declare the line | next lightweight item or upgrade |
+
+## License
+
+[MIT](LICENSE) © r-y-ren

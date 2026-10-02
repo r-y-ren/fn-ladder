@@ -1,6 +1,7 @@
 ---
 name: fn-divide
-description: 当需求文档（requirements.md）已就绪、需要把任务划分为分层函数时使用——fn-ladder 流程第二阶段（函数划分），产出责任文档。用户提到 fn-divide、函数划分、责任文档时也用。
+description: Use when requirements.md is ready and the task must be decomposed into layered functions — fn-ladder stage 2 (function decomposition), producing the responsibility document. Also use when the user mentions fn-divide, function decomposition, or responsibility document. 当需求文档（requirements.md）已就绪、需要把任务划分为分层函数时使用——fn-ladder 流程第二阶段（函数划分），产出责任文档。用户提到 fn-divide、函数划分、责任文档时也用。
+license: MIT
 ---
 
 # fn-divide：函数划分（fn-ladder 第②阶段）

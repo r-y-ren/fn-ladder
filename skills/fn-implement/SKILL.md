@@ -1,6 +1,7 @@
 ---
 name: fn-implement
-description: 当函数骨架（unimplemented:fn 桩）已就位、需要逐函数实现时使用——fn-ladder 流程第四阶段（分批自底向上实现），维护函数级四态实现清单。用户提到 fn-implement、开始实现、继续实现某个 fn-ladder 任务时也用。
+description: Use when function skeletons (unimplemented:fn stubs) are in place and functions must be implemented one by one — fn-ladder stage 4 (bottom-up batch implementation), tracking the per-function four-state list. Also use when the user mentions fn-implement, start implementing, or continue a fn-ladder task. 当函数骨架（unimplemented:fn 桩）已就位、需要逐函数实现时使用——fn-ladder 流程第四阶段（分批自底向上实现），维护函数级四态实现清单。用户提到 fn-implement、开始实现、继续实现某个 fn-ladder 任务时也用。
+license: MIT
 ---
 
 # fn-implement：分批自底向上实现（fn-ladder 第④阶段）

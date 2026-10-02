@@ -1,6 +1,7 @@
 ---
 name: fn-analyze
-description: 当有可自动拉取的运行结果数据（如 Kaggle 对战数据、评测分数、基准测试结果），需要分析现状并给出函数级改进方向时使用——fn-ladder 的数据驱动改进入口。用户提到 fn-analyze、分析结果、看看数据、为什么输了、改进方向时也用。
+description: Use when automatically pullable run-result data exists (match records, evaluation scores, benchmark results) and the status quo must be analyzed into function-level improvement directions — the data-driven improvement entry of fn-ladder. Also use when the user mentions fn-analyze, analyze the results, look at the data, why did we lose, or improvement directions. 当有可自动拉取的运行结果数据（如 Kaggle 对战数据、评测分数、基准测试结果），需要分析现状并给出函数级改进方向时使用——fn-ladder 的数据驱动改进入口。用户提到 fn-analyze、分析结果、看看数据、为什么输了、改进方向时也用。
+license: MIT
 ---
 
 # fn-analyze：结果分析与改进提案（fn-ladder 数据驱动改进入口）

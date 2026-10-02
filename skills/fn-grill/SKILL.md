@@ -1,6 +1,7 @@
 ---
 name: fn-grill
-description: 当接到将要实现的功能或存量改造任务、需求尚模糊或细节未定、即将进入编码时使用——fn-ladder 流程第一阶段（需求打磨），把需求逼问清楚并落盘为需求文档。用户提到 fn-grill、函数阶梯、先把需求问清楚时也用。
+description: Use when a feature request or legacy-rework task lands with fuzzy or undecided requirements, right before coding — fn-ladder stage 1 (requirements capture), which grills the requirements clear and writes them down. Also use when the user mentions fn-grill, function-ladder, or 'let's nail down the requirements first'. 当接到将要实现的功能或存量改造任务、需求尚模糊或细节未定、即将进入编码时使用——fn-ladder 流程第一阶段（需求澄清），把需求逼问清楚并落盘为需求文档。用户提到 fn-grill、函数阶梯、先把需求问清楚时也用。
+license: MIT
 ---
 
 # fn-grill：需求打磨（fn-ladder 第①阶段）

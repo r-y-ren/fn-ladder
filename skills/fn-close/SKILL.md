@@ -1,6 +1,7 @@
 ---
 name: fn-close
-description: 当实现清单全员 wired（或用户要求提前验收）、需要终检并产出验收报告时使用——fn-ladder 流程第五阶段（收尾核验）。用户提到 fn-close、验收、终检、这个任务做完了吗时也用。
+description: Use when every function in the implementation ledger is wired (or the user asks for early acceptance) and a final check plus acceptance report is due — fn-ladder stage 5 (close-out verification). Also use when the user mentions fn-close, acceptance, final check, or is this task done. 当实现清单全员 wired（或用户要求提前验收）、需要终检并产出验收报告时使用——fn-ladder 流程第五阶段（收尾核验）。用户提到 fn-close、验收、终检、这个任务做完了吗时也用。
+license: MIT
 ---
 
 # fn-close：收尾核验（fn-ladder 第⑤阶段）

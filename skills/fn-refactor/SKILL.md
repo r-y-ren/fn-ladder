@@ -1,6 +1,7 @@
 ---
 name: fn-refactor
-description: 当已有项目要进入 fn-ladder 流程、需要先重构进标准结构时使用——fn-ladder 的存量项目入口（on-ramp）。用户提到 fn-refactor、重构现有项目、把老项目纳入函数阶梯时也用。
+description: Use when an existing project must first be refactored into the fn-ladder standard structure — the legacy-project entry (on-ramp). Also use when the user mentions fn-refactor, refactor the existing project, or bring the old project onto the function ladder. 当已有项目要进入 fn-ladder 流程、需要先重构进标准结构时使用——fn-ladder 的存量项目入口（on-ramp）。用户提到 fn-refactor、重构现有项目、把老项目纳入函数阶梯时也用。
+license: MIT
 ---
 
 # fn-refactor：存量项目重构入口（fn-ladder on-ramp）

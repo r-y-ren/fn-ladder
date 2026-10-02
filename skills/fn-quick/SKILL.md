@@ -1,6 +1,7 @@
 ---
 name: fn-quick
-description: 当需要轻量线（参数/单函数手术）或收到 fn-quick 调用时使用——轻量线 v1.6 起内置 fn-grill/fn-analyze，本入口为兼容路由：按轻量线执行并提示改用 grill/analyze 入口。用户提到 fn-quick、轻量、快速改一下、单行手术时也用。
+description: Use for lightweight-line work (parameter-level or single-function surgery) or when fn-quick is invoked — since v1.6 the lightweight line is built into fn-grill/fn-analyze, so this entry is a compatibility router that runs the lightweight line and suggests the grill/analyze entries. Also use when the user mentions fn-quick, lightweight, quick fix, or one-line surgery. 当需要轻量线（参数/单函数手术）或收到 fn-quick 调用时使用——轻量线 v1.6 起内置 fn-grill/fn-analyze，本入口为兼容路由：按轻量线执行并提示改用 grill/analyze 入口。用户提到 fn-quick、轻量、快速改一下、单行手术时也用。
+license: MIT
 ---
 
 # fn-quick：轻量线兼容入口（v1.6 起退役为路由）

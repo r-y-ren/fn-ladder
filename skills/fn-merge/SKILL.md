@@ -1,6 +1,7 @@
 ---
 name: fn-merge
-description: 当需要把多个用 fn-ladder 结构实现的项目合并成一个大项目时使用——fn-ladder 的合并入口（on-ramp）。用户提到 fn-merge、项目合并、合并几个 fn 项目时也用。
+description: Use when several projects built in the fn-ladder structure must be merged into one big project — the merge entry (on-ramp). Also use when the user mentions fn-merge, project merge, or merge several fn projects. 当需要把多个用 fn-ladder 结构实现的项目合并成一个大项目时使用——fn-ladder 的合并入口（on-ramp）。用户提到 fn-merge、项目合并、合并几个 fn 项目时也用。
+license: MIT
 ---
 
 # fn-merge：多项目合并入口（fn-ladder on-ramp）

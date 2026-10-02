@@ -1,6 +1,7 @@
 ---
 name: fn-review
-description: 当需要对 fn-ladder 项目做随时审计时使用——功能演进周期开始前（强烈建议）、或任何时候抽查代码与文档的一致性。用户提到 fn-review、审查、审计、检查一下现状时也用。
+description: Use whenever a fn-ladder project needs an audit — strongly recommended before starting an evolution cycle, or any time code/document consistency is spot-checked. Also use when the user mentions fn-review, review, audit, or check the current state. 当需要对 fn-ladder 项目做随时审计时使用——功能演进周期开始前（强烈建议）、或任何时候抽查代码与文档的一致性。用户提到 fn-review、审查、审计、检查一下现状时也用。
+license: MIT
 ---
 
 # fn-review：只读审计（fn-ladder 随叫随到）

@@ -1,0 +1,95 @@
+# fn-ladder 函数阶梯
+
+[English](README.md) · **中文**
+
+以**函数为颗粒度**的 AI 编程开发流技能套件，用来防"AI 假完成"——AI 自称做完，实际漏实现、或函数存在但没接线。
+
+为 ZCode 的 Agent Skills 机制设计（`~/.zcode/skills/`），ZCode 体验优先。其他兼容 Agent Skills 的客户端（Claude Code、Codex CLI、Gemini CLI、Cursor、opencode 等）通过一次性"复制 + 修补"安装支持——把 [INSTALL.md](INSTALL.md) 交给你的 agent 执行。技能本体刻意保留 ZCode 惯用法，适配发生在你自己的环境里，源仓库永不修改。
+
+## 流程
+
+```
+fn-refactor（存量项目）─┐
+                        ├──> fn-grill ──> fn-divide ──> fn-scaffold ──> fn-implement ──> fn-close
+fn-merge（多项目合并）──┘    需求澄清      函数划分      结构+骨架       分批自底向上实现    收尾核验
+```
+
+每阶段之间是**硬门**：阶段完毕必须显式提示"下一步命令（`/fn-xxx`）或修订本步骤"，用户不点头不推进；on-ramp 只做自身阶段，出口交给正常流程的单个技能。验收后可进入**功能演进周期**：同一项目追加功能再走一轮五阶段（`fn_docs/` 演化，R/B 编号续号，详见 [FN-LADDER.md](FN-LADDER.md)）。
+
+横向能力随时可用，不占阶段位：`fn-review`（只读审计）· `fn-brainstorm`（卡壳发散+判据再质疑）· `fn-analyze`（数据驱动分析与函数级改进提案，含**冲刺模式**）。单函数/参数级小手术走**轻量线**（内置 `fn-grill`/`fn-analyze`，快问→实现→核验→fn-commit 落痕；`fn-quick` 保留为兼容路由）。
+
+> **发版纪律**：版本号单一来源——直接用 `scripts/release.sh <版本号> [说明]` 一步完成（发版前机器检查 → bump 并同步两处 ZCode 版本号 → JSON 校验 → CHANGELOG 校验 → 提交 → 打 tag → 推送）。ZCode 显示版本取 plugin.json、更新检测对比 marketplace.json，两处必须一致。**机器检查**（`release.sh --check` 可独立跑）：退役术语零残留（术语变更在 release.sh 退役术语表登记）、技能清单 skills/ ↔ install.sh 双向一致、版本双轨一致、LICENSE 与技能 license 字段齐备、CHANGELOG 含当前版本——命中即中止，不带病发版。
+
+## 四条不变式（详见 [FN-LADDER.md](FN-LADDER.md)）
+
+1. **代码是真值，文档是导航**——改任何状态标注前必须先跑核验命令、贴出输出。
+2. **阶段硬门**——显式提示下一步命令或修订，未选择不推进。
+3. **文档所有权分离**——每份文档只有一个写入阶段，其他阶段只读。
+4. **中途进入靠对账**——不靠对话记忆，接手时先跑全局核验与文档对账。
+
+## 防假完成机制
+
+- 函数四态判据：`stub → implemented → tested → wired`（叶子必自有单测；wired = 调用点存在、顶层实跑）；
+- 需求覆盖矩阵双向拦截：没函数负责的需求 = 漏实现；连不到入口的函数 = 死代码；
+- 骨架优先：统一桩标记 `unimplemented:fn:<名>`，剩余工作由代码自己报告；
+- 验收报告只贴事实与原始输出，终审归用户；
+- **效果闭环**：改进的验收延伸到运行结果——fn-analyze 对历史提案的"预期信号"逐条打分（达成/未达成/反向），防"功能验收通过但分数没涨"的合法假完成；
+- **检查脚本**（`scripts/`）：`fn-check.sh`（代码侧三件套）与 `fn-doc-lint.py`（文档侧机械校验）、`fn-score.py`（提案登记表打分）、`fn-commit.sh`（JOURNAL 落痕 + commit + push）——机械检查交给脚本，不靠模型肉眼；
+- **子代理**：对账子代理（隔离对账输出）、批间评审子代理（双轴审查批 diff，可免审）、逐函数实现子代理（可选档，大批发）。
+
+## 任务产物
+
+```
+fn_docs/                          # 流程文档（默认随 git 提交）
+├── README.md                     # 用户向：工作流程 + 功能（零术语）
+├── requirements.md               # 八节：需求、术语、验收方式、外部依赖（含结果数据源）…
+├── responsibility.md             # 概览树 + 覆盖矩阵 + 功能块递归分块
+├── implementation/               # batches.md（批次表）/ functions.md（状态真值）/ history.md（留痕）
+├── inventory.md                  # 仅 merge：已实施清单（代码现状快照）
+├── analyses/                     # 仅 analyze：分析报告（哈希定名）+ registry.jsonl 提案登记表
+├── results/                      # 仅 analyze：运行结果快照（全量保留=AI 纠错依据）
+├── vendor/                       # 外来拉取件户口：provenance 六字段 + SHA + 上游 LICENSE/NOTICE + payload
+├── JOURNAL.md                    # 过程流水（fn-commit 追加，任何执行者可写）
+└── acceptance.md                 # 六道终检事实 + 原始输出（演进周期旧版归档为 acceptance-c<N>.md）
+fn_work/                          # 源码：src/（每顶层函数一文件夹 + shared/）+ tests/ 镜像 + 环境依赖
+│   └── <lab>/evidence/           # 代码邻接运行结果（规则同 results/：全量保留）
+.scratch/                         # 暂存区（gitignore）：拉件/大语料/代理工作目录；禁系统 /tmp；验收清点
+```
+
+## 安装
+
+**方式一（推荐，ZCode 插件）**：Settings → Plugin Management → Discover → `+` 添加市场
+`https://github.com/r-y-ren/fn-ladder.git`，安装 **fn-ladder** 插件。
+
+**方式二（符号链接，适合直接改仓库开发）**：
+
+```bash
+git clone https://github.com/r-y-ren/fn-ladder.git ~/Code/fn-ladder
+bash ~/Code/fn-ladder/install.sh
+```
+
+`install.sh` 在 `~/.zcode/skills/` 下为十一个技能与总览创建指向仓库的符号链接——源头只有仓库一份，改仓库即生效。**同一台机器二选一**：插件与符号链接并存会导致技能重复。
+
+**方式三（其他 Agent Skills 客户端）**：Claude Code、Codex CLI、Gemini CLI、Cursor、opencode 等——把 [INSTALL.md](INSTALL.md) 交给你的 agent 执行：复制技能到目标客户端技能目录，并修补副本（脚本路径、调用语法、能力措辞）。源仓库不作任何修改。
+
+新开会话后 `/fn-grill` 起步（存量项目 `/fn-refactor`，多项目合并 `/fn-merge`）。
+
+## 技能清单
+
+| 技能 | 阶段 | 出口 |
+|---|---|---|
+| fn-grill | ① 需求澄清（轮次/前沿逼问，必问八条） | `/fn-divide` |
+| fn-divide | ② 函数划分（责任文档） | `/fn-scaffold` |
+| fn-scaffold | ③ 结构 + 骨架（fn_work/、统一桩） | `/fn-implement` |
+| fn-implement | ④ 垂直切片分批、自底向上四态 | 批间门三项 / `/fn-close` |
+| fn-close | ⑤ 六道终检 + 验收报告（交付型含可选外发三验） | 终审归用户 |
+| fn-refactor | on-ramp：存量项目（两轮 grill + 快照安全网） | `/fn-divide` |
+| fn-merge | on-ramp：多项目合并（inventory → 合并需求 → 汇总责任） | `/fn-scaffold` |
+| fn-review | 审计（随叫随到，只读不写）：机械轴 + 规格轴双轴审查代码与文档一致性 | 指回对应回路 |
+| fn-brainstorm | 卡壳发散（blocked / 方案返工 / 想不清）：≥3 方案含激进项 + 推荐 | 指回对应回路 |
+| fn-analyze | 数据驱动改进（拉运行结果→三轴分析→函数级提案→效果闭环打分） | 提案交 `/fn-grill` |
+| fn-quick | 兼容路由（v1.6 退役）：轻量线已内置 fn-grill/fn-analyze，执行时必标注线别 | 继续轻量项或升全量线 |
+
+## 许可
+
+[MIT](LICENSE) © r-y-ren
