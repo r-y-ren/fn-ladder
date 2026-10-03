@@ -5,6 +5,9 @@
 校验项：
   requirements  八节齐全（警告）、R 编号不重复
   functions     状态词合法、函数与责任文档一致（双向）
+  functions×code 桩标记交叉（档案-代码一致）：状态 stub 但代码无桩标记、
+                 已实现/已测/已接线但代码仍有桩标记、代码有桩但清单无行
+                 ——三者任一 = 档案静默漂移疑云（no-op 写入防线）
   batches       ▶ 至多一个、引用函数存在、与 history 批次不重叠
   responsibility 概览树与函数块一致、函数名唯一、矩阵 R 双向覆盖、
                  调用方存在、调用链可达到入口（死代码拦截）
@@ -146,6 +149,33 @@ if frows:
     notin = sorted(fnset - set(flist))
     if notin:
         err(f"责任文档函数未入实现清单: {notin}")
+
+# ---- functions ×代码桩标记（档案-代码一致：防 no-op 写入静默漂移）----
+stubbed = {}  # 函数名 -> 首个桩标记所在文件
+fw = os.path.join(ROOT, "fn_work")
+if frows and os.path.isdir(fw):
+    for dirpath, dirnames, filenames in os.walk(fw):
+        dirnames[:] = [d for d in dirnames if d not in ("node_modules", "venv", ".venv", ".git", "__pycache__", ".pytest_cache")]
+        for name in filenames:
+            p = os.path.join(dirpath, name)
+            try:
+                with open(p, encoding="utf-8", errors="ignore") as fh:
+                    for line in fh:
+                        for sm in re.finditer(r"unimplemented:fn:([A-Za-z_]\w*)", line):
+                            stubbed.setdefault(sm.group(1), os.path.relpath(p, ROOT))
+            except OSError:
+                pass
+    for c in frows:
+        nm, st = c[0], c[2]
+        word = st.split()[0].rstrip("：:")
+        if word == "stub" and nm not in stubbed:
+            err(f"档案漂移疑云：{nm} 标 stub 但代码无桩标记（写入可能 no-op；按 history.md+git log+复跑核验重建状态）")
+        elif word in ("implemented", "tested") or st.startswith("wired"):
+            if nm in stubbed:
+                err(f"档案漂移疑云：{nm} 标「{st}」但代码仍有桩标记: {stubbed[nm]}")
+    for nm in sorted(stubbed):
+        if nm not in set(flist):
+            err(f"代码有桩但实现清单无行: {nm} @ {stubbed[nm]}")
 
 # ---- batches.md / history.md ----
 arrow = 0

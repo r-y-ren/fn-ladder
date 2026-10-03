@@ -20,12 +20,13 @@ Lateral skills are available any time, outside the stage chain: `fn-review` (rea
 
 > **Release discipline** — the version number has a single source: run `scripts/release.sh <version> [note]` to do everything (preflight machine checks → bump both ZCode manifests → JSON validation → CHANGELOG check → commit → tag → push). ZCode displays the version from `plugin.json` and checks updates against `marketplace.json`, so both must stay equal. **Machine checks** (`release.sh --check` runs standalone): retired-terminology zero-residue (retirements registered in release.sh's table), skill list `skills/` ↔ `install.sh` two-way consistency, dual-manifest version consistency, LICENSE + per-skill `license` fields present, CHANGELOG contains the version — any hit aborts the release.
 
-## Four invariants (see [FN-LADDER.md](FN-LADDER.md))
+## Five invariants (see [FN-LADDER.md](FN-LADDER.md))
 
 1. **Code is the truth, docs are the navigation** — before changing any status marker, run the verification command and paste its output.
 2. **Stage hard gates** — stop and offer "next command or revise"; never advance without an explicit user choice.
 3. **Document ownership** — each document has exactly one writing stage; all other stages are read-only.
 4. **Mid-entry by reconciliation** — never rely on conversation memory; on resuming, re-run global checks and reconcile against the documents.
+5. **Step discipline** — every numbered step list, must-ask checklist, stage sequence and final-check pass is a mandatory sequence: execute each item in order and leave visible evidence, never skip, merge, reorder or claim completion without evidence; before exiting, self-check the list item by item and redo anything lacking evidence.
 
 ## Anti-fake-completion mechanisms
 
@@ -35,7 +36,7 @@ Lateral skills are available any time, outside the stage chain: `fn-review` (rea
 - Acceptance reports paste facts and raw outputs only; the final verdict belongs to the user;
 - **Effect closed-loop**: acceptance extends to run results — fn-analyze scores each historical proposal's "expected signal" (achieved / missed / reversed), catching the "tests pass but the score didn't move" form of legal fake completion;
 - **Check scripts** (`scripts/`): `fn-check.sh` (code-side trio), `fn-doc-lint.py` (mechanical doc validation), `fn-score.py` (proposal-registry scoring), `fn-commit.sh` (JOURNAL entry + commit + push) — mechanical checks go to scripts, not the model's eyes;
-- **Subagents**: reconciliation subagent (isolates reconciliation output), per-batch review subagent (dual-axis diff review, waivable), per-function implementation subagent (optional tier for large batches).
+- **Subagents**: reconciliation subagent (isolates reconciliation output), per-batch review subagent (tri-axis diff review: spec / standards / doc-sync, waivable), per-function implementation subagent (optional tier for large batches).
 
 ## Task artifacts
 
