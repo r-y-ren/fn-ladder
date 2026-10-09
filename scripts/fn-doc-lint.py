@@ -11,9 +11,13 @@
   batches       ▶ 至多一个、引用函数存在、与 history 批次不重叠
   responsibility 概览树与函数块一致、函数名唯一、矩阵 R 双向覆盖、
                  调用方存在、调用链可达到入口（死代码拦截）
+  tracker       五节齐全（身份行/进入五步/批次节/批间门/豁免与 Ruling 行 schema）、
+                 步骤行预告-证据字段合法、豁免行全字段（类型/范围/对象/剩余/状态）、
+                 wired 三方对照（tracker×functions；git 侧警告级——接管 commit 豁免可改写文案）
 """
 import os
 import re
+import subprocess
 import sys
 from collections import defaultdict
 
@@ -205,6 +209,75 @@ for line in hist.splitlines():
 both = sorted(bnums & hnums)
 if both:
     err(f"批次同时出现在批次表与历史表: {both}")
+
+# ---- tracker.md（v2.2 步骤账本：存在才查，兼容旧任务与轻量线）----
+trk_path = os.path.join(D, "implementation", "tracker.md")
+if os.path.isfile(trk_path):
+    with open(trk_path, encoding="utf-8") as f:
+        trk = f.read()
+    tlines = trk.splitlines()
+    if tlines and not tlines[0].startswith("# Implement tracker"):
+        err("tracker 缺身份行（首行须 # Implement tracker …）")
+    if "## 进入五步" not in trk:
+        err("tracker 缺「## 进入五步」节")
+    heads = [l for l in tlines if l.startswith("## ")]
+    if not any(re.match(r"## B\d+", h) and "批间门" not in h for h in heads):
+        err("tracker 缺批次节（## B<n>，批间门节不算）")
+    if "批间门" not in trk:
+        err("tracker 缺批间门节/行")
+    done_fns = set()
+    for line in tlines:
+        if line.startswith("- ["):
+            m = re.match(r"^- \[( |x)\] (.+?) — (预告|证据): ", line)
+            if not m:
+                err(f"tracker 步骤行缺「— 预告/证据:」字段: {line[:40]}")
+                continue
+            mark, ident, kind = m.groups()
+            if kind == "预告" and mark == "x":
+                err(f"tracker 已勾行仍挂预告（应为证据）: {ident}")
+            if kind == "证据" and mark == " ":
+                err(f"tracker 未勾行却带证据（应先勾后证）: {ident}")
+            fm = re.match(r"([A-Za-z_]\w*) · ", ident)
+            if fm and mark == "x" and re.search(r"·\s*wired", ident):
+                done_fns.add(fm.group(1))
+        elif line.startswith("- Ruling: ") and line.count(" — ") < 3:
+            err(f"tracker Ruling 行缺字段（须 偏离 — 原因 — 代价 — 落点）: {line[:40]}")
+        elif re.match(r"^- X\d+: ", line):
+            if not re.match(r"^- X\d+: (免审|冲刺|预授权连做|接管 commit|analyze 冲刺) \|", line):
+                err(f"tracker 豁免行类型非法（免审/冲刺/预授权连做/接管 commit/analyze 冲刺）: {line[:40]}")
+            if not re.search(r"\| 范围: (单门|本批|剩余全部) \|", line):
+                err(f"tracker 豁免行范围档位非法（单门/本批/剩余全部）: {line[:40]}")
+            if not re.search(r"\| 对象: [^|]+ \|", line):
+                err(f"tracker 豁免行缺对象（技能·门）: {line[:40]}")
+            if not re.search(r"\| 剩余: \d+ \|", line):
+                err(f"tracker 豁免行剩余非法（须整数）: {line[:40]}")
+            if not re.search(r"\| 状态: (active|consumed)\s*$", line):
+                err(f"tracker 豁免行状态非法（active/consumed）: {line[:40]}")
+    fstat = {c[0]: c[2] for c in frows}
+    for fn in sorted(done_fns):
+        st = fstat.get(fn, "")
+        if not st.startswith("wired"):
+            err(f"tracker 记 {fn} · wired 完成而 functions.md 状态为「{st or '无行'}」（三方漂移）")
+    for c in frows:
+        if c[2].startswith("wired") and c[0] not in done_fns:
+            err(f"functions.md 标 {c[0]} wired 而 tracker 无「{c[0]} · wired」完成行（三方漂移）")
+    # git 侧三方对账（警告级：commit 文案可被「接管 commit」豁免改写，err 级会误伤豁免场景）
+    git_names = set()
+    try:
+        out = subprocess.run(["git", "-C", ROOT, "log", "--pretty=%s"],
+                             capture_output=True, text=True, timeout=10)
+        if out.returncode == 0:
+            for s in out.stdout.splitlines():
+                m2 = re.match(r"fn\(([A-Za-z_]\w*)\)", s)
+                if m2:
+                    git_names.add(m2.group(1))
+    except (OSError, subprocess.SubprocessError):
+        pass
+    for c in frows:
+        if git_names and c[2].startswith("wired") and c[0] not in git_names:
+            warn(f"git 侧无 fn({c[0]}) 提交（三方对账警告；用户接管 commit 经豁免可忽略）")
+elif frows:
+    warn("无 tracker.md（v2.2 前任务或轻量线）——步骤账本核查跳过")
 
 print(f"fn-doc-lint @ {D}")
 for w in warns:

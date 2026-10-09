@@ -34,19 +34,20 @@ The skill bodies call repo-root scripts with the phrase `插件根 scripts/…�
 
 | Skill | Scripts to copy into `<skill>/scripts/` |
 |---|---|
-| fn-implement | `fn-check.sh` |
+| fn-implement | `fn-check.sh`, `fn-step-done.sh` |
 | fn-close | `fn-check.sh`, `fn-doc-lint.py` |
 | fn-review | `fn-check.sh`, `fn-doc-lint.py` |
 | fn-analyze | `fn-check.sh`, `fn-doc-lint.py`, `fn-score.py`, `fn-commit.sh` |
 | fn-grill | `fn-commit.sh` |
+| fn-exempt | `fn-commit.sh` |
 | fn-quick | `fn-commit.sh` |
 
-(If unsure, copy all four scripts into every skill — total ~470 lines, harmless.)
+(If unsure, copy all five scripts into every skill — harmless.)
 
 Then, in each patched SKILL.md copy, rewrite the path phrase:
 
 - `插件根 \`scripts/fn-check.sh\`（本技能目录上两级）` → `本技能目录 \`scripts/fn-check.sh\``
-- same for `fn-doc-lint.py`, `fn-score.py`, `fn-commit.sh`
+- same for `fn-doc-lint.py`, `fn-score.py`, `fn-commit.sh`, `fn-step-done.sh`
 - bare mentions of `fn-commit.sh`（如「`fn-commit.sh` 落痕」） stay valid once the file sits in `<skill>/scripts/`; optionally clarify to `scripts/fn-commit.sh`.
 
 Run scripts as `bash scripts/fn-check.sh` / `python3 scripts/fn-doc-lint.py` from the skill directory. Note: `fn-doc-lint.py` validates Chinese section names in `fn_docs/` artifacts — its output language is part of the workflow, leave it as is.
@@ -67,6 +68,8 @@ Every skill ends with a hard gate: 「下一步命令 `/fn-xxx`，或修订本�
 
 Keep the gate semantics exactly: present results, **stop**, offer the two options (next skill / revise this step), do not proceed without the user's explicit choice.
 
+The verbal-exemption announcement phrase 「开始执行 `/fn-exempt`」 (see fn-exempt) uses the same slash syntax — rewrite it by the table above too.
+
 ### Class 4 — Capability wording
 
 If your client **has** subagent/task dispatch: no change needed.
@@ -84,7 +87,7 @@ The four-part subagent conclusion contract (判据判定表 / 关键读数 / 异
 
 ## Step 3 — Acceptance
 
-1. Your client's skill list shows all 11 `fn-*` skills.
+1. Your client's skill list shows all 12 `fn-*` skills.
 2. Invoke `fn-grill` with a small feature idea: it should start the requirements interview and end by stopping at the hard gate with two explicit options.
 3. From any patched skill directory, `bash scripts/fn-check.sh` resolves and runs (exit code may be non-zero on a non-fn-ladder working dir — the point is the script is found).
 
@@ -112,13 +115,13 @@ fn-ladder 以 **ZCode 体验为先**：技能本体刻意保留 ZCode 惯用法�
 
 - **Class 1 脚本路径**：按英文版的「技能 → 所需脚本」表把仓库根 `scripts/` 的脚本复制进各技能的 `scripts/`，并把「插件根 `scripts/xxx`（本技能目录上两级）」改写为「本技能目录 `scripts/xxx`」。`fn-doc-lint.py` 的中文输出是流程的一部分，不要翻译。
 - **Class 2 FN-LADDER.md**：复制进**每个**技能目录（与 SKILL.md 同级），正文保持中文原样——它是规范中枢。
-- **Class 3 出口语法**：把「下一步命令 `/fn-xxx`」的斜杠语法改写为客户端的技能调用形式（Claude Code 不变/插件名为 `/插件名:fn-xxx`；Codex 为 `$fn-xxx`；其余写「下一步技能 fn-xxx」）。硬门语义原样保留：呈现、**停**、二选一、用户未选不推进。
+- **Class 3 出口语法**：把「下一步命令 `/fn-xxx`」的斜杠语法改写为客户端的技能调用形式（Claude Code 不变/插件名为 `/插件名:fn-xxx`；Codex 为 `$fn-xxx`；其余写「下一步技能 fn-xxx」）。硬门语义原样保留：呈现、**停**、二选一、用户未选不推进。口头豁免宣告语「开始执行 `/fn-exempt`」同表改写。
 - **Class 4 能力措辞**：客户端无子代理能力时，「派子代理」改为「在当前会话内执行同等步骤（只带精制上下文，不带整段会话史）」；「可 `/clear` 或压缩后新开会话」改为「可新开会话」。子代理结论契约（四段）是纯文本约定，一律保留。
 - **Class 5 可忽略**：`install.sh`、`.zcode-plugin/`、`marketplace.json` 是 ZCode 专属安装件，不要复制进技能目录。
 
 ## 第三步——验收
 
-1. 客户端技能列表可见 11 个 `fn-*` 技能；
+1. 客户端技能列表可见 12 个 `fn-*` 技能；
 2. 调用 `fn-grill`，应开始需求逼问，并在出口处停下给出两个显式选项；
 3. 在任一技能目录内 `bash scripts/fn-check.sh` 能找到并运行脚本（非 fn-ladder 工作目录下退出码非零是正常的，验收点是脚本可解析）。
 

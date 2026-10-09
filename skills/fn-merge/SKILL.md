@@ -68,7 +68,7 @@ license: MIT
 
 ## 交接铁律（执行者为后续 fn-implement）
 
-- 新 implementation 三文档（batches/functions/history）生成时必须对照 inventory.md 与新 responsibility.md，**禁止参考任何旧 implementation 文档**——旧进度文档不是真值，代码与清单才是。
+- 新 implementation 四文档（batches/functions/history + tracker 步骤账本）生成时必须对照 inventory.md 与新 responsibility.md，**禁止参考任何旧 implementation 文档（含旧 tracker）**——旧进度文档不是真值，代码与清单才是。tracker 处置：新 tracker 从「进入五步」空账起步，旧账不搬运（防旧漂移传染）。
 - 对函数的每一次修改/重命名：**实施前作为任务排入新批次表（batches.md）**（注明操作与来源，如"重命名：项目A foo → bar"），完成后进历史表（history.md）留痕。
 
 ## 红旗（出现即停）

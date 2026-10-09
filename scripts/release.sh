@@ -24,6 +24,10 @@ preflight() {
     "过五道|过六道"
     "转常规流程|走轻量线"
     "小任务豁免|小任务→轻量线"
+    "用户说“免审”可跳过|无有效豁免行不得跳过（/fn-exempt）"
+    "用户接管 commit 则跳过|接管 commit 须经 /fn-exempt 记账"
+    "预授权例外|预授权连做"
+    "冲刺模式例外|冲刺例外"
   )
   local pair old new hits
   for pair in "${retired[@]}"; do

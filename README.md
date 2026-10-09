@@ -16,7 +16,7 @@ fn-merge (multi-project merge) ┘    requirements   function decomp.  structure
 
 Each stage boundary is a **hard gate**: the skill presents its output and **stops**, offering exactly two options — the next command (`/fn-xxx`) or revising this step — and never proceeds without the user's explicit choice. On-ramps (fn-refactor / fn-merge) do only their own stage and hand over to the normal chain. After acceptance you can start an **evolution cycle**: add features to the same project and run the five stages again on the same `fn_docs/` (see [FN-LADDER.md](FN-LADDER.md)).
 
-Lateral skills are available any time, outside the stage chain: `fn-review` (read-only audit) · `fn-brainstorm` (ideation when stuck + criterion re-questioning) · `fn-analyze` (data-driven analysis and function-level improvement proposals, incl. **sprint mode**). Parameter-level / single-function surgery goes through the **lightweight line** (built into `fn-grill`/`fn-analyze`; `fn-quick` remains as a compatibility router).
+Lateral skills are available any time, outside the stage chain: `fn-review` (read-only audit) · `fn-brainstorm` (ideation when stuck + criterion re-questioning) · `fn-analyze` (data-driven analysis and function-level improvement proposals, incl. **sprint mode**) · `fn-exempt` (**the single entry for all gate exemptions** — review waiver / sprint / pre-authorized continuation / commit takeover / analyze sprint, always ledgered). Parameter-level / single-function surgery goes through the **lightweight line** (built into `fn-grill`/`fn-analyze`; `fn-quick` remains as a compatibility router).
 
 > **Release discipline** — the version number has a single source: run `scripts/release.sh <version> [note]` to do everything (preflight machine checks → bump both ZCode manifests → JSON validation → CHANGELOG check → commit → tag → push). ZCode displays the version from `plugin.json` and checks updates against `marketplace.json`, so both must stay equal. **Machine checks** (`release.sh --check` runs standalone): retired-terminology zero-residue (retirements registered in release.sh's table), skill list `skills/` ↔ `install.sh` two-way consistency, dual-manifest version consistency, LICENSE + per-skill `license` fields present, CHANGELOG contains the version — any hit aborts the release.
 
@@ -26,7 +26,7 @@ Lateral skills are available any time, outside the stage chain: `fn-review` (rea
 2. **Stage hard gates** — stop and offer "next command or revise"; never advance without an explicit user choice.
 3. **Document ownership** — each document has exactly one writing stage; all other stages are read-only.
 4. **Mid-entry by reconciliation** — never rely on conversation memory; on resuming, re-run global checks and reconcile against the documents.
-5. **Step discipline** — every numbered step list, must-ask checklist, stage sequence and final-check pass is a mandatory sequence: execute each item in order and leave visible evidence, never skip, merge, reorder or claim completion without evidence; before exiting, self-check the list item by item and redo anything lacking evidence.
+5. **Step discipline** — every numbered step list, must-ask checklist, stage sequence and final-check pass is a mandatory sequence: execute each item in order and leave visible evidence, never skip, merge, reorder or claim completion without evidence; before exiting, self-check the list item by item and redo anything lacking evidence. The execution carrier is the **tracker step ledger**: the first unchecked row is the current step; completion lines are only written by the `fn-step-done.sh` hard gate (green verification or nothing); the ledger and git outrank conversation memory.
 
 ## Anti-fake-completion mechanisms
 
@@ -35,8 +35,9 @@ Lateral skills are available any time, outside the stage chain: `fn-review` (rea
 - Skeleton-first: unified stub marker `unimplemented:fn:<name>`, so remaining work is reported by the code itself;
 - Acceptance reports paste facts and raw outputs only; the final verdict belongs to the user;
 - **Effect closed-loop**: acceptance extends to run results — fn-analyze scores each historical proposal's "expected signal" (achieved / missed / reversed), catching the "tests pass but the score didn't move" form of legal fake completion;
-- **Check scripts** (`scripts/`): `fn-check.sh` (code-side trio), `fn-doc-lint.py` (mechanical doc validation), `fn-score.py` (proposal-registry scoring), `fn-commit.sh` (JOURNAL entry + commit + push) — mechanical checks go to scripts, not the model's eyes;
-- **Subagents**: reconciliation subagent (isolates reconciliation output), per-batch review subagent (tri-axis diff review: spec / standards / doc-sync, waivable), per-function implementation subagent (optional tier for large batches).
+- **Execution tracker** (`implementation/tracker.md`): every step runs as plan → run → evidence + read-back on a step ledger; the first unchecked row drives execution, so skipped steps and silent no-op writes surface at the first batch;
+- **Check scripts** (`scripts/`): `fn-check.sh` (code-side trio), `fn-doc-lint.py` (mechanical doc validation incl. tracker consistency), `fn-score.py` (proposal-registry scoring), `fn-commit.sh` (JOURNAL entry + commit + push), `fn-step-done.sh` (green-verification-or-no-ledger-write), `fn-selftest.sh` (acceptance pass over lint + fn-step-done on a constructed tree) — mechanical checks go to scripts, not the model's eyes;
+- **Subagents**: reconciliation subagent (isolates reconciliation output), per-batch review subagent (tri-axis diff review: spec / standards / doc-sync, waivable only via `/fn-exempt`), per-function implementation subagent (optional tier for large batches).
 
 ## Task artifacts
 
@@ -45,7 +46,7 @@ fn_docs/                          # process docs (committed with git by default)
 ├── README.md                     # user-facing: workflow + features (jargon-free)
 ├── requirements.md               # eight sections: requirements, terms, acceptance, external deps (incl. result data sources)…
 ├── responsibility.md             # overview tree + coverage matrix + recursive function blocks
-├── implementation/               # batches.md (batch table) / functions.md (status truth) / history.md (log)
+├── implementation/               # batches.md (batch table) / functions.md (status truth) / history.md (log) / tracker.md (step ledger)
 ├── inventory.md                  # merge only: implemented inventory (code-reality snapshot)
 ├── analyses/                     # analyze only: analysis reports (hash-named) + registry.jsonl proposal ledger
 ├── results/                      # analyze only: run-result snapshots (keep all — the AI's error-correction evidence)
@@ -69,7 +70,7 @@ git clone https://github.com/r-y-ren/fn-ladder.git ~/Code/fn-ladder
 bash ~/Code/fn-ladder/install.sh
 ```
 
-`install.sh` symlinks the eleven skills and the hub doc into `~/.zcode/skills/` — one source of truth, edits to the repo take effect immediately. **Pick one per machine**: plugin and symlink together duplicate the skills.
+`install.sh` symlinks the twelve skills and the hub doc into `~/.zcode/skills/` — one source of truth, edits to the repo take effect immediately. **Pick one per machine**: plugin and symlink together duplicate the skills.
 
 **Option 3 — other Agent Skills clients** (Claude Code, Codex CLI, Gemini CLI, Cursor, opencode, …):
 
@@ -92,6 +93,7 @@ Start a fresh session with `/fn-grill` (legacy project: `/fn-refactor`; merging 
 | fn-review | audit (on demand, read-only): mechanical + spec axes over code and docs | back to the matching loop |
 | fn-brainstorm | ideation when stuck (blocked / plan rework / can't see clearly): ≥3 options incl. a radical one | back to the matching loop |
 | fn-analyze | data-driven improvement (pull results → three-axis analysis → function-level proposals → effect scoring) | proposals to `/fn-grill` |
+| fn-exempt | lateral: all gate exemptions (review waiver / sprint / pre-authorized continuation / commit takeover / analyze sprint) — single entry, always ledgered | resume the original flow |
 | fn-quick | compatibility router (retired in v1.6): lightweight line now lives in fn-grill/fn-analyze; always declare the line | next lightweight item or upgrade |
 
 ## License

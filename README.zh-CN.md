@@ -16,7 +16,7 @@ fn-merge（多项目合并）──┘    需求澄清      函数划分      �
 
 每阶段之间是**硬门**：阶段完毕必须显式提示"下一步命令（`/fn-xxx`）或修订本步骤"，用户不点头不推进；on-ramp 只做自身阶段，出口交给正常流程的单个技能。验收后可进入**功能演进周期**：同一项目追加功能再走一轮五阶段（`fn_docs/` 演化，R/B 编号续号，详见 [FN-LADDER.md](FN-LADDER.md)）。
 
-横向能力随时可用，不占阶段位：`fn-review`（只读审计）· `fn-brainstorm`（卡壳发散+判据再质疑）· `fn-analyze`（数据驱动分析与函数级改进提案，含**冲刺模式**）。单函数/参数级小手术走**轻量线**（内置 `fn-grill`/`fn-analyze`，快问→实现→核验→fn-commit 落痕；`fn-quick` 保留为兼容路由）。
+横向能力随时可用，不占阶段位：`fn-review`（只读审计）· `fn-brainstorm`（卡壳发散+判据再质疑）· `fn-analyze`（数据驱动分析与函数级改进提案，含**冲刺模式**）· `fn-exempt`（**豁免唯一入口**——免审/冲刺/预授权连做/接管 commit/analyze 冲刺全部收束于此，必记账）。单函数/参数级小手术走**轻量线**（内置 `fn-grill`/`fn-analyze`，快问→实现→核验→fn-commit 落痕；`fn-quick` 保留为兼容路由）。
 
 > **发版纪律**：版本号单一来源——直接用 `scripts/release.sh <版本号> [说明]` 一步完成（发版前机器检查 → bump 并同步两处 ZCode 版本号 → JSON 校验 → CHANGELOG 校验 → 提交 → 打 tag → 推送）。ZCode 显示版本取 plugin.json、更新检测对比 marketplace.json，两处必须一致。**机器检查**（`release.sh --check` 可独立跑）：退役术语零残留（术语变更在 release.sh 退役术语表登记）、技能清单 skills/ ↔ install.sh 双向一致、版本双轨一致、LICENSE 与技能 license 字段齐备、CHANGELOG 含当前版本——命中即中止，不带病发版。
 
@@ -26,7 +26,7 @@ fn-merge（多项目合并）──┘    需求澄清      函数划分      �
 2. **阶段硬门**——显式提示下一步命令或修订，未选择不推进。
 3. **文档所有权分离**——每份文档只有一个写入阶段，其他阶段只读。
 4. **中途进入靠对账**——不靠对话记忆，接手时先跑全局核验与文档对账。
-5. **步骤纪律**——编号步骤/必问清单/阶段序列/终检道次是强制序列：按序逐条执行、每步留可见证据，禁止跳步、合并、调序、无证据宣称完成；出门前对照清单逐条自检，缺一步证据即补做。
+5. **步骤纪律**——编号步骤/必问清单/阶段序列/终检道次是强制序列：按序逐条执行、每步留可见证据，禁止跳步、合并、调序、无证据宣称完成；出门前对照清单逐条自检，缺一步证据即补做。执行载体是 **tracker 步骤账本**：第一个未勾行 = 当前步，完成行只由 `fn-step-done.sh` 硬门写入（核验绿才记账、失败零写入）；账本与 git 压倒对话记忆。
 
 ## 防假完成机制
 
@@ -35,8 +35,9 @@ fn-merge（多项目合并）──┘    需求澄清      函数划分      �
 - 骨架优先：统一桩标记 `unimplemented:fn:<名>`，剩余工作由代码自己报告；
 - 验收报告只贴事实与原始输出，终审归用户；
 - **效果闭环**：改进的验收延伸到运行结果——fn-analyze 对历史提案的"预期信号"逐条打分（达成/未达成/反向），防"功能验收通过但分数没涨"的合法假完成；
-- **检查脚本**（`scripts/`）：`fn-check.sh`（代码侧三件套）与 `fn-doc-lint.py`（文档侧机械校验）、`fn-score.py`（提案登记表打分）、`fn-commit.sh`（JOURNAL 落痕 + commit + push）——机械检查交给脚本，不靠模型肉眼；
-- **子代理**：对账子代理（隔离对账输出）、批间评审子代理（三轴审查批 diff：规格/标准/档案同步，可免审）、逐函数实现子代理（可选档，大批发）。
+- **执行追踪器**（`implementation/tracker.md`）：每步"预告 → 执行 → 证据+读回"落在步骤账本上，第一个未勾行驱动执行——跳步与 no-op 静默写入第一批就现形；
+- **检查脚本**（`scripts/`）：`fn-check.sh`（代码侧三件套）与 `fn-doc-lint.py`（文档侧机械校验，含 tracker 一致性）、`fn-score.py`（提案登记表打分）、`fn-commit.sh`（JOURNAL 落痕 + commit + push）、`fn-step-done.sh`（核验绿才记账硬门）、`fn-selftest.sh`（构造树上的验收道次：lint + fn-step-done 行为断言）——机械检查交给脚本，不靠模型肉眼；
+- **子代理**：对账子代理（隔离对账输出）、批间评审子代理（三轴审查批 diff：规格/标准/档案同步，免审须走 `/fn-exempt`）、逐函数实现子代理（可选档，大批发）。
 
 ## 任务产物
 
@@ -45,7 +46,7 @@ fn_docs/                          # 流程文档（默认随 git 提交）
 ├── README.md                     # 用户向：工作流程 + 功能（零术语）
 ├── requirements.md               # 八节：需求、术语、验收方式、外部依赖（含结果数据源）…
 ├── responsibility.md             # 概览树 + 覆盖矩阵 + 功能块递归分块
-├── implementation/               # batches.md（批次表）/ functions.md（状态真值）/ history.md（留痕）
+├── implementation/               # batches.md（批次表）/ functions.md（状态真值）/ history.md（留痕）/ tracker.md（步骤账本）
 ├── inventory.md                  # 仅 merge：已实施清单（代码现状快照）
 ├── analyses/                     # 仅 analyze：分析报告（哈希定名）+ registry.jsonl 提案登记表
 ├── results/                      # 仅 analyze：运行结果快照（全量保留=AI 纠错依据）
@@ -69,7 +70,7 @@ git clone https://github.com/r-y-ren/fn-ladder.git ~/Code/fn-ladder
 bash ~/Code/fn-ladder/install.sh
 ```
 
-`install.sh` 在 `~/.zcode/skills/` 下为十一个技能与总览创建指向仓库的符号链接——源头只有仓库一份，改仓库即生效。**同一台机器二选一**：插件与符号链接并存会导致技能重复。
+`install.sh` 在 `~/.zcode/skills/` 下为十二个技能与总览创建指向仓库的符号链接——源头只有仓库一份，改仓库即生效。**同一台机器二选一**：插件与符号链接并存会导致技能重复。
 
 **方式三（其他 Agent Skills 客户端）**：Claude Code、Codex CLI、Gemini CLI、Cursor、opencode 等。
 
@@ -92,6 +93,7 @@ bash ~/Code/fn-ladder/install.sh
 | fn-review | 审计（随叫随到，只读不写）：机械轴 + 规格轴双轴审查代码与文档一致性 | 指回对应回路 |
 | fn-brainstorm | 卡壳发散（blocked / 方案返工 / 想不清）：≥3 方案含激进项 + 推荐 | 指回对应回路 |
 | fn-analyze | 数据驱动改进（拉运行结果→三轴分析→函数级提案→效果闭环打分） | 提案交 `/fn-grill` |
+| fn-exempt | 豁免唯一入口（免审/冲刺/预授权连做/接管 commit/analyze 冲刺全收束）：先宣告后记账，无记账 = 无豁免 | 回原流程继续 |
 | fn-quick | 兼容路由（v1.6 退役）：轻量线已内置 fn-grill/fn-analyze，执行时必标注线别 | 继续轻量项或升全量线 |
 
 ## 许可
