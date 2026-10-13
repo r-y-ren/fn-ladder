@@ -3,14 +3,14 @@
 用法: fn-doc-lint.py [任务工作目录]（默认当前目录；其下应有 fn_docs/）
 
 校验项：
-  requirements  八节齐全（警告）、R 编号不重复
+  requirements  九节齐全（警告）、R 编号不重复
   functions     状态词合法、函数与责任文档一致（双向）
   functions×code 桩标记交叉（档案-代码一致）：状态 stub 但代码无桩标记、
                  已实现/已测/已接线但代码仍有桩标记、代码有桩但清单无行
                  ——三者任一 = 档案静默漂移疑云（no-op 写入防线）
   batches       ▶ 至多一个、引用函数存在、与 history 批次不重叠
   responsibility 概览树与函数块一致、函数名唯一、矩阵 R 双向覆盖、
-                 调用方存在、调用链可达到入口（死代码拦截）
+                 调用方存在、调用链可达到入口（死代码拦截）、长职责点名（>160 字，警告）
   tracker       五节齐全（身份行/进入五步/批次节/批间门/豁免与 Ruling 行 schema）、
                  步骤行预告-证据字段合法、豁免行全字段（类型/范围/对象/剩余/状态）、
                  wired 三方对照（tracker×functions；git 侧警告级——接管 commit 豁免可改写文案）
@@ -24,6 +24,7 @@ from collections import defaultdict
 ROOT = sys.argv[1] if len(sys.argv) > 1 else os.getcwd()
 D = os.path.join(ROOT, "fn_docs")
 errs, warns = [], []
+DUTY_LEN_LIMIT = 160  # 长职责点名阈值（判据见 fn-divide 划法规则 3：长职责≠必须拆，人工定性）
 
 
 def err(m):
@@ -54,7 +55,7 @@ batches = read("implementation", "batches.md")
 hist = read("implementation", "history.md")
 
 # ---- requirements ----
-for sec in ["根本目的", "环境与技术栈决策", "术语表", "需求条目", "非功能约束", "外部依赖", "范围外", "变更记录"]:
+for sec in ["根本目的", "环境与技术栈决策", "术语表", "参考资料", "需求条目", "非功能约束", "外部依赖", "范围外", "变更记录"]:
     if req and f"## {sec}" not in req:
         warn(f"requirements 缺节: {sec}")
 rids = re.findall(r"^### R(\d+)", req, re.M)
@@ -86,6 +87,9 @@ for line in resp.splitlines():
     cm = re.match(r"\s*[-*]\s*调用方[：:]\s*(.+)", line)
     if cm and cur:
         callers[cur] = [x.strip() for x in re.split("[,，、]", cm.group(1))]
+    dm = re.match(r"\s*[-*]\s*职责[：:]\s*(.+)", line)
+    if dm and cur and len(dm.group(1)) > DUTY_LEN_LIMIT:
+        warn(f"长职责请人工复查（纯编排不拆 / 混职补叶子）: {cur}（{len(dm.group(1))} 字）")
     if section == "需求覆盖矩阵":
         c = cells(line)
         if len(c) == 2 and re.fullmatch(r"R\d+(\s*\[P1\])?", c[0]):

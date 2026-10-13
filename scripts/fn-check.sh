@@ -3,9 +3,11 @@
 # 用法: fn-check.sh [任务工作目录]（默认当前目录；其下应有 fn_work/）
 # 覆盖: ① 残留桩 grep  ② 全量测试  ③ tests/ 镜像结构抽查
 # 测试命令优先级: FN_TEST_CMD 环境变量 > Makefile(test) > npm test > pytest > go test
+# 环境: 经项目虚拟环境执行（fn_work/.venv 存在时自动激活；其他生态经 FN_TEST_CMD/等价机制）——禁止污染全局
 set -uo pipefail
 ROOT="${1:-$PWD}"
 FW="$ROOT/fn_work"
+[ -f "$FW/.venv/bin/activate" ] && . "$FW/.venv/bin/activate"
 rc=0
 say() { printf '%s\n' "$*"; }
 

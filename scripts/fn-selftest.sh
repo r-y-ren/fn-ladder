@@ -2,7 +2,7 @@
 # fn-selftest.sh —— 验收道次：构造 fn_docs 树，跑 fn-doc-lint 与 fn-step-done 行为断言
 # 用法: bash scripts/fn-selftest.sh   （全过 exit 0；任一断言失败立即 exit 1）
 # 覆盖（对应 docs/specs/2026-10-09-review-fixes.md Testing Decisions）：
-#   lint：一致态放行 / wired 三方漂移报错 / 缺批次节报错 / 豁免行类型非法报错
+#   lint：一致态放行 / wired 三方漂移报错 / 缺批次节报错 / 豁免行类型非法报错 / 缺参考资料节告警 / 长职责点名告警
 #   fn-step-done：核验失败零写入 / 成功落账+读回 / 重复记账拒绝
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
@@ -23,6 +23,8 @@ x
 ## 环境与技术栈决策
 x
 ## 术语表
+x
+## 参考资料
 x
 ## 需求条目
 ### R1
@@ -113,6 +115,19 @@ sed -i 's/^- X1: 免审 |/- X1: 免测 |/' "$FIX/fn_docs/implementation/tracker.
 lint
 [ "$RC" != 0 ] && grep -q "豁免行类型非法" <<<"$OUT" || fail "豁免行类型非法应报错，实际：$OUT"
 ok "豁免行类型非法报错"
+
+build_fixture
+sed -i '/^## 参考资料$/d' "$FIX/fn_docs/requirements.md"
+lint
+grep -q "WARN requirements 缺节: 参考资料" <<<"$OUT" || fail "缺参考资料节应告警，实际：$OUT"
+ok "缺参考资料节告警"
+
+build_fixture
+LONG="$(printf 'x%.0s' {1..170})"
+sed -i "s/职责：干一件事/职责：$LONG/" "$FIX/fn_docs/responsibility.md"
+lint
+grep -q "WARN 长职责请人工复查" <<<"$OUT" || fail "长职责应点名告警，实际：$OUT"
+ok "长职责点名告警"
 
 echo "== fn-selftest：fn-step-done 行为断言 =="
 T="$FIX/step.md"

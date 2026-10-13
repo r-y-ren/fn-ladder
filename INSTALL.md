@@ -9,7 +9,7 @@ fn-ladder is built for **ZCode first**. Its skill bodies deliberately keep ZCode
 
 1. **Patch copies only.** Every edit in this guide targets the files inside your client's skill directory. If you find yourself editing the fn-ladder repo, stop.
 2. **Names and semantics are frozen.** Keep skill names (`fn-grill` … `fn-quick`) and all workflow semantics (five stages, hard gates, four-state criteria, exit protocol) unchanged. Patches adapt *client-specific syntax and paths* only.
-3. **Subagent capability assumed.** fn-implement / fn-analyze / fn-review dispatch subagents (reconciliation, per-function implementation, review, data pull). If your client can dispatch subagents or tasks, apply Class 4 patches as written. If not, apply the Class 4 fallback.
+3. **Subagent capability assumed.** fn-implement / fn-analyze / fn-review / fn-close dispatch subagents (reconciliation, per-function implementation, review, data pull, adversarial review, user walkthrough & fix). If your client can dispatch subagents or tasks, apply Class 4 patches as written. If not, apply the Class 4 fallback.
 
 ## Step 1 — Place the skills
 
@@ -105,7 +105,7 @@ fn-ladder 以 **ZCode 体验为先**：技能本体刻意保留 ZCode 惯用法�
 
 1. **只改副本。** 所有修改都发生在目标客户端技能目录内；发现自己在改 fn-ladder 仓库时立即停手。
 2. **名称与语义冻结。** 技能名（`fn-grill` … `fn-quick`）与全部流程语义（五阶段、硬门、四态判据、出口协议）不变；修补只针对**客户端相关的语法与路径**。
-3. **子代理能力为默认假设。** fn-implement / fn-analyze / fn-review 会派子代理（对账、逐函数实现、评审、拉数据）。客户端支持派生子任务时，Class 4 无需改动；不支持时按 Class 4 降级。
+3. **子代理能力为默认假设。** fn-implement / fn-analyze / fn-review / fn-close 会派子代理（对账、逐函数实现、评审、拉数据、对抗审查、走查与修复）。客户端支持派生子任务时，Class 4 无需改动；不支持时按 Class 4 降级。
 
 ## 第一步——放置技能
 

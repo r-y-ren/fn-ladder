@@ -14,7 +14,7 @@ fn-refactor (legacy project) ─┐
 fn-merge (multi-project merge) ┘    requirements   function decomp.  structure    bottom-up batches   close-out
 ```
 
-Each stage boundary is a **hard gate**: the skill presents its output and **stops**, offering exactly two options — the next command (`/fn-xxx`) or revising this step — and never proceeds without the user's explicit choice. On-ramps (fn-refactor / fn-merge) do only their own stage and hand over to the normal chain. After acceptance you can start an **evolution cycle**: add features to the same project and run the five stages again on the same `fn_docs/` (see [FN-LADDER.md](FN-LADDER.md)).
+Each stage boundary is a **hard gate**: the skill presents its output and **stops**, offering exactly two options — the next command (`/fn-xxx`) or revising this step — and never proceeds without the user's explicit choice. On-ramps (fn-refactor / fn-merge) do only their own stage and hand over to the normal chain. At task start the requirements interview explicitly asks once whether **reference materials** (`docs/` or user-designated paths) exist and registers them by pointer in `requirements.md` — they are interview input, never truth. After acceptance you can start an **evolution cycle**: add features to the same project and run the five stages again on the same `fn_docs/` (see [FN-LADDER.md](FN-LADDER.md)).
 
 Lateral skills are available any time, outside the stage chain: `fn-review` (read-only audit) · `fn-brainstorm` (ideation when stuck + criterion re-questioning) · `fn-analyze` (data-driven analysis and function-level improvement proposals, incl. **sprint mode**) · `fn-exempt` (**the single entry for all gate exemptions** — review waiver / sprint / pre-authorized continuation / commit takeover / analyze sprint, always ledgered). Parameter-level / single-function surgery goes through the **lightweight line** (built into `fn-grill`/`fn-analyze`; `fn-quick` remains as a compatibility router).
 
@@ -31,6 +31,10 @@ Lateral skills are available any time, outside the stage chain: `fn-review` (rea
 ## Anti-fake-completion mechanisms
 
 - Four-state function criteria: `stub → implemented → tested → wired` (leaf functions need their own green unit test; wired = call sites exist and the top entry actually runs);
+- **Fine granularity as rules**: one requirement = one function (independently acceptable, modifiable, mappable); leaf responsibility = one transformation — long ≠ split, pure orchestration stays (the test is whether unrelated transformations are inlined);
+- **Per-batch adversarial review** (a subagent alongside the tri-axis reviewer): assume the docs are wrong and the commands fail — run commands verbatim, paste raw output; Critical findings must hit zero before the gate;
+- **Virtual env discipline**: implementation builds `fn_work/.venv` (or equivalent) with the deps manifest committed as truth; tests/verifications run inside it, never polluting the global environment;
+- **User walkthrough loop** at close-out: a simulated user runs every command in the user guide (env setup included); problems are fixed by a subagent executing fn-implement with its ledger discipline intact, looping until clean (5-round cap → user adjudicates);
 - Requirement-coverage matrix blocks both ways: a requirement with no owning function = missed implementation; a function unreachable from any entry = dead code;
 - Skeleton-first: unified stub marker `unimplemented:fn:<name>`, so remaining work is reported by the code itself;
 - Acceptance reports paste facts and raw outputs only; the final verdict belongs to the user;
@@ -44,7 +48,7 @@ Lateral skills are available any time, outside the stage chain: `fn-review` (rea
 ```
 fn_docs/                          # process docs (committed with git by default)
 ├── README.md                     # user-facing: workflow + features (jargon-free)
-├── requirements.md               # eight sections: requirements, terms, acceptance, external deps (incl. result data sources)…
+├── requirements.md               # nine sections: requirements, terms, reference materials, acceptance, external deps (incl. result data sources)…
 ├── responsibility.md             # overview tree + coverage matrix + recursive function blocks
 ├── implementation/               # batches.md (batch table) / functions.md (status truth) / history.md (log) / tracker.md (step ledger)
 ├── inventory.md                  # merge only: implemented inventory (code-reality snapshot)
@@ -52,8 +56,9 @@ fn_docs/                          # process docs (committed with git by default)
 ├── results/                      # analyze only: run-result snapshots (keep all — the AI's error-correction evidence)
 ├── vendor/                       # third-party pull provenance: six fields + SHA + upstream LICENSE/NOTICE + payload
 ├── JOURNAL.md                    # running log (appended via fn-commit; any executor may write)
-└── acceptance.md                 # six final checks' facts + raw output (old cycles archived as acceptance-c<N>.md)
-fn_work/                          # source: src/ (one folder per top-level function + shared/) + mirrored tests/ + env deps
+├── acceptance.md                 # six final checks' facts + raw output (old cycles archived as acceptance-c<N>.md)
+└── user-guide.md                 # close-out user manual (env setup / quick start / usage / known limits) — walkthrough-verified
+fn_work/                          # source: src/ (one folder per top-level function + shared/) + mirrored tests/ + env (deps manifest committed; .venv kept, rebuildable)
 │   └── <lab>/evidence/           # code-adjacent run results (same rule as results/: keep all)
 .scratch/                         # staging (gitignored): pulls / big corpora / agent workdirs; no system /tmp; settled at acceptance
 ```
