@@ -81,6 +81,8 @@ If it **lacks** subagent dispatch, rewrite in the copies:
 
 The four-part subagent conclusion contract (判据判定表 / 关键读数 / 异常与限界 / 建议) is plain text — keep it regardless.
 
+**Frozen dispatch templates**: the adversarial-review / user-walkthrough dispatch templates (code blocks starting 「你是 … 子代理」) are frozen text — do NOT apply these rewrites inside them. If your client lacks subagent dispatch entirely, replace the whole template block with a fallback paragraph: run the same adversarial steps in a fresh, independent context (new session) role-playing the reviewer, keep the same output contract, and state in the report that review independence is weakened (no separate agent). When the generic Class 4 downgrade conflicts with this frozen-template fallback, the **fallback wins** (adversarial-review / walkthrough contexts).
+
 ### Class 5 — Paths you can ignore
 
 `~/.zcode/skills/` and `install.sh` are ZCode-only installation machinery. Do not copy `install.sh`, `.zcode-plugin/`, or `marketplace.json` into your client's skill dir — they are repo-level files and harmless to leave behind.
@@ -116,7 +118,7 @@ fn-ladder 以 **ZCode 体验为先**：技能本体刻意保留 ZCode 惯用法�
 - **Class 1 脚本路径**：按英文版的「技能 → 所需脚本」表把仓库根 `scripts/` 的脚本复制进各技能的 `scripts/`，并把「插件根 `scripts/xxx`（本技能目录上两级）」改写为「本技能目录 `scripts/xxx`」。`fn-doc-lint.py` 的中文输出是流程的一部分，不要翻译。
 - **Class 2 FN-LADDER.md**：复制进**每个**技能目录（与 SKILL.md 同级），正文保持中文原样——它是规范中枢。
 - **Class 3 出口语法**：把「下一步命令 `/fn-xxx`」的斜杠语法改写为客户端的技能调用形式（Claude Code 不变/插件名为 `/插件名:fn-xxx`；Codex 为 `$fn-xxx`；其余写「下一步技能 fn-xxx」）。硬门语义原样保留：呈现、**停**、二选一、用户未选不推进。口头豁免宣告语「开始执行 `/fn-exempt`」同表改写。
-- **Class 4 能力措辞**：客户端无子代理能力时，「派子代理」改为「在当前会话内执行同等步骤（只带精制上下文，不带整段会话史）」；「可 `/clear` 或压缩后新开会话」改为「可新开会话」。子代理结论契约（四段）是纯文本约定，一律保留。
+- **Class 4 能力措辞**：客户端无子代理能力时，「派子代理」改为「在当前会话内执行同等步骤（只带精制上下文，不带整段会话史）」；「可 `/clear` 或压缩后新开会话」改为「可新开会话」。子代理结论契约（四段）是纯文本约定，一律保留。**冻结派发模板豁免**：对抗审查/用户走查派发模板（"你是 … 子代理"代码块）是冻结文本，Class 4 机械替换不得改写其正文；客户端完全无子代理能力时，把整个模板块替换为降级段——新开独立上下文（新会话）扮演审查者执行同套步骤、保留输出契约，并在报告注明"审查独立性弱化（无独立子代理）"。通用降级与本降级段冲突时，**以冻结模板降级段为准**（对抗审查/走查场景）。
 - **Class 5 可忽略**：`install.sh`、`.zcode-plugin/`、`marketplace.json` 是 ZCode 专属安装件，不要复制进技能目录。
 
 ## 第三步——验收

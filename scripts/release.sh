@@ -28,6 +28,7 @@ preflight() {
     "用户接管 commit 则跳过|接管 commit 须经 /fn-exempt 记账"
     "预授权例外|预授权连做"
     "冲刺模式例外|冲刺例外"
+    "测后清理临时物|临时件只落 /tmp、仓库零写入"
   )
   local pair old new hits
   for pair in "${retired[@]}"; do
